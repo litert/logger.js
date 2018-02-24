@@ -1,0 +1,40 @@
+{
+  "name": "@litert/logger",
+  "version": "0.1.0",
+  "description": "A logs-recorder for LiteRT framework.",
+  "main": "dist/index.js",
+  "scripts": {
+    "prepare": "npm run rebuild",
+    "build": "tsc -p .",
+    "rebuild": "npm run clean && npm run build",
+    "test": "echo See directory sources/samples",
+    "clean": "rm -rf dist"
+  },
+  "keywords": [
+    "litert",
+    "lrt",
+    "log",
+    "logger"
+  ],
+  "author": "Angus.Fenying <fenying@litert.org> (https://fenying.net)",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/litert/logger.js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/litert/logger.js/issues"
+  },
+  "homepage": "https://github.com/litert/logger.js#readme",
+  "dependencies": {
+    "@litert/core": "^0.2.0"
+  },
+  "types": "dist/index.d.ts",
+  "typings": "dist/index.d.ts",
+  "devDependencies": {
+    "@types/node": "^9.4.6"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  }
+}

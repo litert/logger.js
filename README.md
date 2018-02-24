@@ -1,0 +1,40 @@
+# LiteRT/Logger
+
+[![npm version](https://img.shields.io/npm/v/@litert/logger.svg?colorB=brightgreen)](https://www.npmjs.com/package/@litert/logger "Stable Version")
+[![npm version](https://img.shields.io/npm/v/@litert/logger/dev.svg)](https://www.npmjs.com/package/@litert/logger "Development Version")
+[![License](https://img.shields.io/npm/l/@litert/logger.svg?maxAge=2592000?style=plastic)](https://github.com/litert/logger/blob/master/LICENSE)
+[![node](https://img.shields.io/node/v/@litert/logger.svg?colorB=brightgreen)](https://nodejs.org/dist/latest-v8.x/)
+[![GitHub issues](https://img.shields.io/github/issues/litert/logger.js.svg)](https://github.com/litert/logger.js/issues)
+[![GitHub Releases](https://img.shields.io/github/release/litert/logger.js.svg)](https://github.com/litert/logger.js/releases "Stable Release")
+[![GitHub Pre-Releases](https://img.shields.io/github/release/litert/logger.js/all.svg)](https://github.com/litert/logger.js/releases "Pre-Release")
+
+A logs-recorder for LiteRT framework.
+
+## Requirement
+
+- TypeScript v2.6.1 (or newer)
+- Node.js v8.0.0 (or newer)
+
+## Installation
+
+Install by NPM:
+
+```sh
+npm i @litert/logger --save
+```
+
+Or install the developing (unstable) version for newest features:
+
+```sh
+npm i @litert/logger@dev --save
+```
+
+## Document
+
+### 简体中文版
+
+- [开发版本](./docs/zh-CN/index.md)
+
+## License
+
+This library is published under [Apache-2.0](./LICENSE) license.
