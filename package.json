@@ -1,14 +1,15 @@
 {
   "name": "@litert/logger",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A logs-recorder for LiteRT framework.",
   "main": "dist/index.js",
   "scripts": {
     "prepare": "npm run rebuild",
     "build": "tsc -p .",
-    "rebuild": "npm run clean && npm run build",
+    "rebuild": "npm run clean && npm run lint && npm run build",
     "test": "echo See directory sources/samples",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "lint": "tslint -p . -c tslint.json"
   },
   "keywords": [
     "litert",
@@ -27,7 +28,7 @@
   },
   "homepage": "https://github.com/litert/logger.js#readme",
   "dependencies": {
-    "@litert/core": "^0.2.0"
+    "@litert/core": "^0.3.2"
   },
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",

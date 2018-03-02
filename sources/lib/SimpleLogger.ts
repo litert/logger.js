@@ -137,7 +137,7 @@ function createStringWriter(
             this.lo_ms();
             this.define(
                 "lo_time",
-                "lo_h + '-' + lo_min + '-' + lo_sec + '.' + lo_ms"
+                "lo_h + ':' + lo_min + ':' + lo_sec + '.' + lo_ms"
             );
         },
         utc_y(): void {
