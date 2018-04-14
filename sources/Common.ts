@@ -169,7 +169,8 @@ export interface LoggerFactory {
     useFullTrace(enable?: boolean, lv?: LogLevel): this;
 
     /**
-     * Added a new driver, or override a existing one.
+     * Added a new driver. If the driver of the name already exists, an
+     * exception will be thrown.
      *
      * @param name   The unique name of driver
      * @param driver The driver object.
