@@ -12,16 +12,31 @@
    | Authors: Angus Fenying <fenying@litert.org>                          |
    +----------------------------------------------------------------------+
  */
-import * as Core from "@litert/core";
 
-export class Exception extends Core.Exception {
+import Loggers, { LogLevel } from "..";
 
-    public constructor(error: number, message: string) {
+interface LogInfo {
 
-        super(error, message);
+    action: string;
 
-        this._type = "litert/logger";
-    }
+    result: number;
 }
 
-export default Exception;
+let log = Loggers.createDataLogger<LogInfo>("data-logger", function(
+    data: LogInfo,
+    subject: string,
+    level: LogLevel,
+    date: Date,
+    trace
+): string {
+
+    // tslint:disable-next-line:max-line-length
+    return `${date.toISOString()} - ${level} - ${subject} - Executed action ${data.action}, with result ${data.result}.`;
+});
+
+Loggers.unmute();
+
+log.debug({
+    action: "SendMessage",
+    result: 1
+});

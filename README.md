@@ -10,7 +10,7 @@ A logs-recorder for LiteRT framework.
 
 ## Requirement
 
-- TypeScript v2.6.1 (or newer)
+- TypeScript v2.7.1 (or newer)
 - Node.js v8.0.0 (or newer)
 
 ## Installation

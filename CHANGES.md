@@ -1,5 +1,5 @@
 # Changes Logs
 
-## v0.1.1
+## v0.2.0
 
-- Fixed the format of local time.
+- A full new simpler logger.

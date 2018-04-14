@@ -12,20 +12,21 @@
    | Authors: Angus Fenying <fenying@litert.org>                          |
    +----------------------------------------------------------------------+
  */
-import * as Abstract from "../Abstracts";
-import { IDictionary } from "@litert/core";
 
-let drivers: IDictionary<Abstract.Driver> = {};
+import * as L from "@litert/core";
+import { EXCEPTION_TYPE } from "./Common";
 
-export function addDriver(
-    name: string,
-    driver: Abstract.Driver
-): Abstract.Driver {
+export const E_DRIVER_NOT_FOUND = 1;
+export const E_DRIVER_FOUND = 2;
 
-    return drivers[name] = driver;
+export class Exception extends L.Exception {
+
+    public constructor(error: number, message: string, origin?: any) {
+
+        super(error, message, origin);
+
+        this._type = EXCEPTION_TYPE;
+    }
 }
 
-export function getDriver(name: string): Abstract.Driver {
-
-    return drivers[name];
-}
+export default Exception;

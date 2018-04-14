@@ -1,6 +1,6 @@
 {
   "name": "@litert/logger",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "A logs-recorder for LiteRT framework.",
   "main": "dist/index.js",
   "scripts": {
@@ -28,7 +28,7 @@
   },
   "homepage": "https://github.com/litert/logger.js#readme",
   "dependencies": {
-    "@litert/core": "^0.3.2"
+    "@litert/core": "^0.5.0"
   },
   "types": "dist/index.d.ts",
   "typings": "dist/index.d.ts",

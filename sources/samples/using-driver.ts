@@ -12,54 +12,39 @@
    | Authors: Angus Fenying <fenying@litert.org>                          |
    +----------------------------------------------------------------------+
  */
-import * as Abstract from "../Abstracts";
 
-class ConsoleDriver implements Abstract.Driver {
+import Loggers, { LogLevel } from "..";
 
-    private _name: string;
+interface LogInfo {
 
-    public constructor(name: string) {
+    action: string;
 
-        this._name = name;
-    }
-
-    public get name(): string {
-
-        return this._name;
-    }
-
-    public writeText(
-        level: Abstract.Level,
-        category: string,
-        text: string
-    ): void {
-
-        // tslint:disable-next-line:no-console
-        console.log(text);
-        return;
-    }
-
-    public writeBinary(
-        data: Buffer
-    ): void {
-
-        // tslint:disable-next-line:no-console
-        console.warn("Cannot output binary log to console.");
-        return;
-    }
-
-    public async flush(): Promise<void> {
-
-        return Promise.resolve();
-    }
-
-    public isBinary(): boolean {
-
-        return false;
-    }
+    result: number;
 }
 
-export function createConsoleDriver(): Abstract.Driver {
+Loggers.registerDriver("driver-sample", {
+    log(text: string): void {
 
-    return new ConsoleDriver("console");
-}
+        // tslint:disable-next-line:no-console
+        console.log("Sample Driver:", text);
+    }
+});
+
+let log = Loggers.createDataLogger<LogInfo>("data-logger", function(
+    data: LogInfo,
+    subject: string,
+    level: LogLevel,
+    date: Date
+): string {
+
+    // tslint:disable-next-line:max-line-length
+    return `${date.toISOString()} - ${level} - ${subject} - Executed action ${data.action}, with result ${data.result}.`;
+
+}, "driver-sample");
+
+Loggers.unmute();
+
+log.debug({
+    action: "SendMessage",
+    result: 1
+});

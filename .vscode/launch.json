@@ -4,26 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
-        
         {
             "type": "node",
             "request": "launch",
-            "name": "Simple Logger",
-            "program": "${workspaceFolder}\\sources\\samples\\quick-start.ts",
+            "name": "Test Text Logs",
+            "program": "${workspaceFolder}/sources/samples/text-logs.ts",
             "sourceMaps": true,
-            "cwd": "${workspaceFolder}",
-            "outFiles": [
-                "${workspaceFolder}/dist/*.js",
-                "${workspaceFolder}/dist/**/*.js"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Advance Logger",
-            "program": "${workspaceFolder}\\sources\\samples\\advance-logger.ts",
-            "sourceMaps": true,
-            "cwd": "${workspaceFolder}",
             "outFiles": [
                 "${workspaceFolder}/dist/*.js",
                 "${workspaceFolder}/dist/**/*.js"

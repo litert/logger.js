@@ -13,14 +13,21 @@
    +----------------------------------------------------------------------+
  */
 
-export { createSimpleLogger } from "./SimpleLogger";
-export { createAdvanceLogger } from "./AdvanceLogger";
-export * from "./Abstracts";
+import Loggers from "..";
 
-import { createConsoleDriver } from "./drivers/Console";
+const logs1 = Loggers.createTextLogger("app1");
+const logs2 = Loggers.createTextLogger("app2");
 
-import * as Drivers from "./drivers";
+Loggers.unmute("debug");
 
-export * from "./drivers";
+const logs3 = Loggers.createTextLogger("app3");
 
-Drivers.addDriver("console", createConsoleDriver());
+logs1.debug("test 1");
+logs2.debug("test 2");
+logs3.debug("test 3");
+
+Loggers.mute("debug");
+
+logs1.debug("test 4");
+logs2.debug("test 5");
+logs3.debug("test 6");
