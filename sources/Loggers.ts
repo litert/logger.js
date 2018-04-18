@@ -304,9 +304,9 @@ implements LoggerFactory {
         }
         else {
 
-            for (lv of LOG_LEVELS) {
+            for (let level of LOG_LEVELS) {
 
-                this._globalConfig[lv].enabled = false;
+                this._globalConfig[level].enabled = false;
             }
         }
 
@@ -326,9 +326,9 @@ implements LoggerFactory {
         }
         else {
 
-            for (lv of LOG_LEVELS) {
+            for (let level of LOG_LEVELS) {
 
-                this._globalConfig[lv].enabled = true;
+                this._globalConfig[level].enabled = true;
             }
         }
 
@@ -348,9 +348,9 @@ implements LoggerFactory {
         }
         else {
 
-            for (lv of LOG_LEVELS) {
+            for (let level of LOG_LEVELS) {
 
-                this._globalConfig[lv].fullTrace = enabled;
+                this._globalConfig[level].fullTrace = enabled;
             }
         }
 
@@ -370,9 +370,9 @@ implements LoggerFactory {
         }
         else {
 
-            for (lv of LOG_LEVELS) {
+            for (let level of LOG_LEVELS) {
 
-                this._globalConfig[lv].trace = enabled;
+                this._globalConfig[level].trace = enabled;
             }
         }
 
