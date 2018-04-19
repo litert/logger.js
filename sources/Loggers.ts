@@ -72,7 +72,7 @@ function createLogMethod(
                 "${subject}",
                 "${lv.toUpperCase()}",
                 new Date(),
-                $trace
+                ${$trace}
             ));
             return this;
         }`))(formatter, driver);
