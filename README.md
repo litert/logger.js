@@ -6,7 +6,7 @@
 [![GitHub issues](https://img.shields.io/github/issues/litert/logger.js.svg)](https://github.com/litert/logger.js/issues)
 [![GitHub Releases](https://img.shields.io/github/release/litert/logger.js.svg)](https://github.com/litert/logger.js/releases "Stable Release")
 
-A logs-recorder for LiteRT framework.
+A logs-writer for LiteRT framework.
 
 ## Requirement
 

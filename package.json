@@ -1,14 +1,14 @@
 {
   "name": "@litert/logger",
-  "version": "0.2.3",
+  "version": "0.3.0",
   "description": "A logs-recorder for LiteRT framework.",
-  "main": "dist/index.js",
+  "main": "lib/index.js",
   "scripts": {
     "prepare": "npm run rebuild",
     "build": "tsc -p .",
     "rebuild": "npm run clean && npm run lint && npm run build",
     "test": "echo See directory sources/samples",
-    "clean": "rm -rf dist",
+    "clean": "rm -rf lib samples",
     "lint": "tslint -p . -c tslint.json"
   },
   "keywords": [
@@ -30,10 +30,10 @@
   "dependencies": {
     "@litert/core": "^0.6.0"
   },
-  "types": "dist/index.d.ts",
-  "typings": "dist/index.d.ts",
+  "types": "lib/index.d.ts",
+  "typings": "lib/index.d.ts",
   "devDependencies": {
-    "@types/node": "^9.4.6"
+    "typescript": "^2.9.2"
   },
   "engines": {
     "node": ">=8.0.0"

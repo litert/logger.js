@@ -22,6 +22,7 @@
         "only-arrow-functions": false,
         "no-namespace": false,
         "no-internal-module": false,
+        "quotemark": false,
         "unified-signatures": false,
         "ban-types": false,
         "no-conditional-assignment": false,

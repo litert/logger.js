@@ -19,8 +19,8 @@
     // "isolatedModules": true,               /* Transpile each file as a separate module (similar to 'ts.transpileModule'). */
     "declaration": true,
     "sourceMap": true,
-    "rootDir": "sources",
-    "outDir": "dist",
+    "rootDir": "./src",
+    "outDir": ".",
     "noImplicitAny": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,

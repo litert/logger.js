@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v0.3.0
+
+- Rebuild for flexibility and performance.
+
 ## v0.2.3
 
 - Upgrade `@litert/core` to v0.6.0.
