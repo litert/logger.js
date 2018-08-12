@@ -56,11 +56,11 @@ import Loggers from "../lib";
      */
     logs.debug("This is DEBUG log.");
 
-    logs.enableTrace(true);
+    logs.enableTrace();
 
     logs.warning("This is WARNING log.");
 
-    logs.useFullTrace(true);
+    logs.enableTrace(10);
 
     logs.notice("This is NOTICE log.");
 

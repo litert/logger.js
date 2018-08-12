@@ -14,33 +14,34 @@
  *  limitations under the License.
  */
 
-import * as E from "./Exception";
-
 import Logger from "./Logger";
 
 import {
-    ILevelOptions,
-    DEFAULT_FORMATTER,
-    DEFAULT_TEXT_FORMATTER
+    ILevelOptions
 } from "./Internal";
 
-import { ConsoleDriver } from "./ConsoleDriver";
+import {
+    DEFAULT_JSON_FORMATTER,
+    DEFAULT_TEXT_FORMATTER
+} from "./Formatters";
+
+import { createConsoleDriver } from "./Drivers/Console";
 
 import {
-    ILoggerFactory,
-    ILogFormatter,
+    IFactory,
+    IFormatter,
     DEFAULT_SUBJECT,
     DEFAULT_DRIVER,
     ILogger,
-    DefaultLogLevels,
-    ILogDriver,
-    DEFAULT_LEVEL_NAMES
+    DefaultLevels,
+    IDriver,
+    DEFAULT_LEVELS
 } from "./Common";
 
 class LoggerFactory
-implements ILoggerFactory<string> {
+implements IFactory<string> {
 
-    protected _drivers: Record<string, ILogDriver>;
+    protected _drivers: Record<string, IDriver>;
 
     protected _loggers: Record<string, ILogger<any, string>>;
 
@@ -48,12 +49,12 @@ implements ILoggerFactory<string> {
 
     protected _levels: string[];
 
-    public constructor(levels: string[] = DEFAULT_LEVEL_NAMES) {
+    public constructor(levels: string[] = DEFAULT_LEVELS) {
 
         this._loggers = {};
 
         this._drivers = {
-            [DEFAULT_DRIVER]: new ConsoleDriver()
+            [DEFAULT_DRIVER]: createConsoleDriver()
         };
 
         this._levels = levels;
@@ -64,151 +65,140 @@ implements ILoggerFactory<string> {
 
             this._globalConfig[lv] = {
                 enabled: false,
-                trace: false,
-                fullTrace: false
+                trace: 0
             };
         }
     }
 
-    public mute(lv?: string): this {
+    /**
+     * Get the names list of registered drivers.
+     */
+    public getDriverNames(): string[] {
 
-        if (lv) {
+        return Object.keys(this._drivers);
+    }
 
-            this._globalConfig[lv].enabled = false;
+    /**
+     * Get the subjects list of created loggers.
+     */
+    public getSubjects(): string[] {
+
+        return Object.keys(this._loggers);
+    }
+
+    /**
+     * Get the levels list of this factory supports.
+     */
+    public getLevels(): string[] {
+
+        return [...this._levels];
+    }
+
+    public mute(levels?: string | string[]): this {
+
+        if (!levels || !levels.length) {
+
+            levels = this._levels;
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level of this._levels) {
+            levels = [ levels ];
+        }
 
-                this._globalConfig[level].enabled = false;
-            }
+        for (let level of levels) {
+
+            this._globalConfig[level].enabled = false;
         }
 
         for (let subject in this._loggers) {
 
-            this._loggers[subject].mute(lv);
+            this._loggers[subject].mute(levels);
         }
 
         return this;
     }
 
-    public unmute(lv?: string): this {
+    public unmute(levels?: string | string[]): this {
 
-        if (lv) {
+        if (!levels || !levels.length) {
 
-            this._globalConfig[lv].enabled = true;
+            levels = this._levels;
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level of this._levels) {
+            levels = [ levels ];
+        }
 
-                this._globalConfig[level].enabled = true;
-            }
+        for (let level of levels) {
+
+            this._globalConfig[level].enabled = true;
         }
 
         for (let subject in this._loggers) {
 
-            this._loggers[subject].unmute(lv);
+            this._loggers[subject].unmute(levels);
         }
 
         return this;
     }
 
-    public useFullTrace(enabled: boolean = true, lv?: string): this {
+    public enableTrace(depth: number = 1, levels?: string | string[]): this {
 
-        if (lv) {
+        if (!levels || levels.length === 0) {
 
-            this._globalConfig[lv].fullTrace = enabled;
+            levels = this._levels.slice();
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level of this._levels) {
+            levels = [ levels ];
+        }
 
-                this._globalConfig[level].fullTrace = enabled;
+        for (let lv of levels) {
+
+            this._globalConfig[lv].trace = depth;
+
+            for (let subject in this._loggers) {
+
+                this._loggers[subject].enableTrace(depth, lv);
             }
-        }
-
-        for (let subject in this._loggers) {
-
-            this._loggers[subject].useFullTrace(enabled, lv);
         }
 
         return this;
     }
 
-    public enableTrace(enabled: boolean = true, lv?: string): this {
-
-        if (lv) {
-
-            this._globalConfig[lv].trace = enabled;
-        }
-        else {
-
-            for (let level of this._levels) {
-
-                this._globalConfig[level].trace = enabled;
-            }
-        }
-
-        for (let subject in this._loggers) {
-
-            this._loggers[subject].enableTrace(enabled, lv);
-        }
-
-        return this;
-    }
-
-    public registerDriver(name: string, driver: ILogDriver): this {
+    public registerDriver(name: string, driver: IDriver): boolean {
 
         if (this._drivers[name]) {
 
-            throw new E.Exception(
-                E.E_DRIVER_FOUND,
-                `The driver of name "${name}" already exists.`
-            );
+            return false;
         }
 
         this._drivers[name] = driver;
 
-        return this;
+        return true;
     }
 
-    public getDriver(name: string): ILogDriver | null {
-
-        if (!this._drivers[name]) {
-
-            throw new E.Exception(
-                E.E_DRIVER_NOT_FOUND,
-                `The driver of name "${name}" doesn't exist.`
-            );
-        }
+    public getDriver(name: string): IDriver {
 
         return this._drivers[name] || null;
     }
 
     public createTextLogger(
         subject: string = DEFAULT_SUBJECT,
-        formatter: ILogFormatter<string, string> = DEFAULT_TEXT_FORMATTER,
+        formatter: IFormatter<string, string> = DEFAULT_TEXT_FORMATTER,
         driver: string = DEFAULT_DRIVER
     ): ILogger<string, string> {
 
-        if (this._loggers[subject]) {
-
-            return this._loggers[subject];
-        }
-
-        return this._loggers[subject] = new Logger(
+        return this.createDataLogger<string>(
             subject,
-            this.getDriver(driver),
-            this._globalConfig,
             formatter,
-            this._levels
-        ) as any;
+            driver
+        );
     }
 
     public createDataLogger<T>(
         subject: string = DEFAULT_SUBJECT,
-        formatter: ILogFormatter<T, string> = DEFAULT_FORMATTER,
+        formatter: IFormatter<T, string> = DEFAULT_JSON_FORMATTER,
         driver: string = DEFAULT_DRIVER
     ): ILogger<T, string> {
 
@@ -227,18 +217,25 @@ implements ILoggerFactory<string> {
     }
 }
 
-const factory = new LoggerFactory(DEFAULT_LEVEL_NAMES);
-
-export function getDefaultFactory<
-    L extends string = DefaultLogLevels
->(): ILoggerFactory<L> {
-
-    return factory as any;
-}
-
-export function createLoggerFactory<
-    L extends string = DefaultLogLevels
->(levels: L[]): ILoggerFactory<L> {
+/**
+ * Create a new factory object.
+ */
+export function createFactory<
+    L extends string = DefaultLevels
+>(levels: L[]): IFactory<L> {
 
     return new LoggerFactory(levels) as any;
+}
+
+/**
+ * The default factory object.
+ */
+const factory = createFactory<DefaultLevels>(DEFAULT_LEVELS);
+
+/**
+ * Get the default factory object.
+ */
+export function getDefaultFactory(): IFactory<DefaultLevels> {
+
+    return factory as any;
 }

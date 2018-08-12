@@ -17,10 +17,10 @@
 import { ILevelOptions } from "./Internal";
 import {
 
-    ILogFormatter,
-    ILogDriver,
+    IFormatter,
+    IDriver,
     IBaseLogger,
-    DEFAULT_LEVEL_NAMES
+    DEFAULT_LEVELS
 
 } from "./Common";
 
@@ -32,30 +32,23 @@ function _emptyLogMethod(this: Logger, x: string) {
 function createLogMethod(
     subject: string,
     level: string,
-    tracing: boolean,
-    fullTrace: boolean,
-    driver: ILogDriver,
-    formatter: ILogFormatter<any, string>,
-    textInput: boolean
+    traceDepth: number,
+    driver: IDriver,
+    formatter: IFormatter<any, string>
 ): any {
 
     let cs: string[] = [];
 
     cs.push(`return function(log, now = new Date()) {`);
 
-    if (tracing) {
+    if (traceDepth) {
 
         cs.push('let tmpObj = {};');
         cs.push(`Error.captureStackTrace(tmpObj, this.${level});`);
 
-        if (fullTrace) {
-
-            cs.push('let traces = tmpObj.stack.split(/\\n\\s+at\\s+/).slice(1);');
-        }
-        else {
-
-            cs.push('let traces = [tmpObj.stack.split(/\\n\\s+at\\s+/)[1]];');
-        }
+        cs.push('let traces = tmpObj.stack.split(');
+        cs.push('   /\\n\\s+at\\s+/');
+        cs.push(`).slice(1, ${traceDepth + 1});`);
     }
 
     subject = subject.replace(/"/g, "\\\"");
@@ -67,7 +60,7 @@ function createLogMethod(
     cs.push(`        "${subject}",`);
     cs.push(`        "${level}",`);
 
-    if (tracing) {
+    if (traceDepth) {
 
         cs.push(`        now,`);
         cs.push(`        traces`);
@@ -106,18 +99,18 @@ implements IBaseLogger<string> {
 
     protected _subject: string;
 
-    protected _formatter!: ILogFormatter<any, string>;
+    protected _formatter!: IFormatter<any, string>;
 
-    protected _driver: ILogDriver;
+    protected _driver: IDriver;
 
     protected _levels: string[];
 
     public constructor(
         subject: string,
-        driver: ILogDriver,
+        driver: IDriver,
         settings: Record<string, ILevelOptions>,
-        wraper?: ILogFormatter<any, string>,
-        levels: string[] = DEFAULT_LEVEL_NAMES
+        wraper?: IFormatter<any, string>,
+        levels: string[] = DEFAULT_LEVELS
     ) {
 
         this._options = {};
@@ -134,12 +127,16 @@ implements IBaseLogger<string> {
 
             this._options[lv] = {
                 enabled: settings[lv].enabled,
-                trace: settings[lv].trace,
-                fullTrace: settings[lv].fullTrace
+                trace: settings[lv].trace
             };
 
             this._updateMethod(lv);
         }
+    }
+
+    public flush(): void | Promise<void> {
+
+        return this._driver.flush();
     }
 
     public getSubject(): string {
@@ -147,77 +144,66 @@ implements IBaseLogger<string> {
         return this._subject;
     }
 
-    public useFullTrace(enable: boolean = true, lv?: string): this {
+    public getLevels(): string[] {
 
-        if (lv !== undefined) {
+        return [...this._levels];
+    }
 
-            this._options[lv].fullTrace = enable;
-            this._updateMethod(lv);
+    public enableTrace(depth: number = 1, levels?: string | string[]): this {
+
+        if (!levels || levels.length === 0) {
+
+            levels = this._levels.slice();
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level in this._options) {
+            levels = [ levels ];
+        }
 
-                this._options[level].fullTrace = enable;
-                this._updateMethod(<any> level);
-            }
+        for (let level of levels) {
+
+            this._options[level].trace = depth;
+            this._updateMethod(level);
         }
 
         return this;
     }
 
-    public enableTrace(enable: boolean = true, lv?: string): this {
+    public unmute(levels?: string | string[]): this {
 
-        if (lv !== undefined) {
+        if (!levels || !levels.length) {
 
-            this._options[lv].trace = enable;
-            this._updateMethod(lv);
+            levels = this._levels;
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level in this._options) {
-
-                this._options[level].trace = enable;
-                this._updateMethod(<any> level);
-            }
+            levels = [ levels ];
         }
 
-        return this;
-    }
+        for (let level of levels) {
 
-    public unmute(lv?: string): this {
-
-        if (lv !== undefined) {
-
-            this._options[lv].enabled = true;
-            this._updateMethod(lv);
-        }
-        else {
-
-            for (let level in this._options) {
-
-                this._options[level].enabled = true;
-                this._updateMethod(<any> level);
-            }
+            this._options[level].enabled = true;
+            this._updateMethod(<any> level);
         }
 
         return this;
     }
 
-    public mute(lv?: string): this {
+    public mute(levels?: string | string[]): this {
 
-        if (lv !== undefined) {
+        if (!levels || !levels.length) {
 
-            this._options[lv].enabled = false;
-            this._updateMethod(lv);
+            levels = this._levels;
         }
-        else {
+        else if (typeof levels === "string") {
 
-            for (let level in this._options) {
+            levels = [ levels ];
+        }
 
-                this._options[level].enabled = false;
-                this._updateMethod(<any> level);
-            }
+        for (let level of levels) {
+
+            this._options[level].enabled = false;
+            this._updateMethod(<any> level);
         }
 
         return this;
@@ -230,7 +216,6 @@ implements IBaseLogger<string> {
             this._subject,
             lv,
             this._options[lv].trace,
-            this._options[lv].fullTrace,
             this._driver,
             this._formatter
         ) : _emptyLogMethod;

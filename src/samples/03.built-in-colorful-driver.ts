@@ -14,11 +14,11 @@
  *  limitations under the License.
  */
 
-import Loggers, { createColorfulConsoleDriver } from "../lib";
+import Loggers, { createColorfulTTYDriver } from "../lib";
 
 (function builtInColorfulDriver(): void {
 
-    const theColorDriver = createColorfulConsoleDriver();
+    const theColorDriver = createColorfulTTYDriver();
 
     theColorDriver.foreColor("green", "info");
     theColorDriver.foreColor("red", "error");
@@ -56,11 +56,11 @@ import Loggers, { createColorfulConsoleDriver } from "../lib";
      */
     logs.debug("This is DEBUG log.");
 
-    logs.enableTrace(true);
+    logs.enableTrace();
 
     logs.warning("This is WARNING log.");
 
-    logs.useFullTrace(true);
+    logs.enableTrace(10);
 
     logs.notice("This is NOTICE log.");
 

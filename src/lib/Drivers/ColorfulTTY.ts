@@ -16,7 +16,7 @@
 
 // tslint:disable:no-console
 
-import { ILogDriver } from "./Common";
+import { IDriver } from "../Common";
 
 export type ForeColorSet = "blue" | "cyan" | "green" | "magenta" | "grey" |
                             "red" | "yellow" | "white" | "black" | "default";
@@ -25,6 +25,23 @@ export type BgColorSet = ForeColorSet;
 
 const BG_COLOR_ENDING = "\x1B[49m";
 const FORE_COLOR_ENDING = "\x1B[39m";
+
+type Writer = (
+    text: string,
+    subject: string,
+    level: string,
+    date: Date
+) => void;
+
+function NON_COLORFUL_WRITER(
+    text: string,
+    subject: string,
+    level: string,
+    date: Date
+): void {
+
+    console.log(text);
+}
 
 const FORE_COLORS: Record<ForeColorSet, string> = {
     "default": "",
@@ -52,11 +69,25 @@ const BG_COLORS: Record<BgColorSet, string> = {
     "yellow": "\u001b[43m"
 };
 
-export interface IColorfulConsoleDriver
-extends ILogDriver {
+export interface IColorfulTTYDriver
+extends IDriver {
 
+    /**
+     * Set the fore-color for the logs of a level.
+     *
+     * @param color The color of the level.
+     * @param level Specify the level to be colorified.
+     *              If no level specified, then the default color will be set.
+     */
     foreColor(color: ForeColorSet, level?: string): this;
 
+    /**
+     * Set the background-color for the logs of a level.
+     *
+     * @param color The color of the level.
+     * @param level Specify the level to be colorified.
+     *              If no level specified, then the default color will be set.
+     */
     bgColor(color: BgColorSet, level?: string): this;
 }
 
@@ -67,10 +98,14 @@ interface IStyle {
     end: string;
 }
 
-const DEFAULT_LEVEL = Symbol("__default__");
+/**
+ * This ugly line is due to the breaking changes after TypeScript 2.9.x.
+ * @see https://github.com/Microsoft/TypeScript/issues/24587
+ */
+const DEFAULT_LEVEL: string = Symbol("__default__") as any;
 
-class ColorfulConsoleDriver
-implements IColorfulConsoleDriver {
+class ColorfulTTYDriver
+implements IColorfulTTYDriver {
 
     private _foreColors: Record<string, string>;
 
@@ -81,10 +116,10 @@ implements IColorfulConsoleDriver {
     public constructor() {
 
         this._bgColors = {
-            [DEFAULT_LEVEL]: ""
+            [DEFAULT_LEVEL]: "default"
         };
         this._foreColors = {
-            [DEFAULT_LEVEL]: ""
+            [DEFAULT_LEVEL]: "default"
         };
 
         this._levels = {
@@ -93,6 +128,8 @@ implements IColorfulConsoleDriver {
                 end: ""
             }
         };
+
+        this.write = this._buildWriter();
     }
 
     public bgColor(color: BgColorSet, level?: string): this {
@@ -115,7 +152,7 @@ implements IColorfulConsoleDriver {
         return this;
     }
 
-    private _rebuild(level: string | symbol): void {
+    private _rebuild(level: string/* | symbol*/): void {
 
         let start: string = "";
         let end: string = "";
@@ -142,13 +179,7 @@ implements IColorfulConsoleDriver {
         date: Date
     ): void {
 
-        const dec = this._levels[level] || this._levels[DEFAULT_LEVEL];
-
-        return console.log(
-            text.split("\n").map(
-                (x) => `${dec.start}${x}${dec.end}`
-            ).join("\n")
-        );
+        return;
     }
 
     public flush(): void {
@@ -160,9 +191,65 @@ implements IColorfulConsoleDriver {
 
         // do nothing.
     }
+
+    public static isTerminal(): boolean {
+
+        // @ts-ignore
+        return this.isNodeJS() && (
+            // @ts-ignore
+            process.stdout.isTTY ||
+            // @ts-ignore
+            process.stdout.constructor.name === "Socket" // Debugging
+        );
+    }
+
+    public static isNodeJS(): boolean {
+
+        // @ts-ignore
+        return typeof process === "object" && typeof process.stdout === "object";
+    }
+
+    private _buildWriter(): Writer {
+
+        if (ColorfulTTYDriver.isTerminal()) {
+
+            return this._buildWriterForTerminal();
+        }
+
+        return NON_COLORFUL_WRITER;
+    }
+
+    private _buildWriterForTerminal(): Writer {
+
+        const cs: string[] = [];
+
+        cs.push(`return function(text, subject, level, date) {`);
+        cs.push(`const dec = this._levels[level] || this._levels[DEFAULT_LEVEL];`);
+        cs.push(`return console.log(`);
+        cs.push(`    text.split("\\n").map(`);
+        cs.push(`       (x) => \`\${dec.start}\${x}\${dec.end}\``);
+        cs.push(`    ).join("\\n")`);
+        cs.push(`);`);
+        cs.push(`};`);
+
+        return (new Function(
+            "DEFAULT_LEVEL",
+            cs.join("\n")
+        ))(DEFAULT_LEVEL);
+    }
 }
 
-export function createColorfulConsoleDriver(): IColorfulConsoleDriver {
+/**
+ * Create a colorful-tty driver.
+ */
+export function createColorfulTTYDriver(): IColorfulTTYDriver {
 
-    return new ColorfulConsoleDriver();
+    if (!ColorfulTTYDriver.isTerminal()) {
+
+        console.warn(
+            "The ColorfulTTYDriver is only usable in Node.JS terminal."
+        );
+    }
+
+    return new ColorfulTTYDriver();
 }

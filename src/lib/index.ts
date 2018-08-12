@@ -14,24 +14,16 @@
  *  limitations under the License.
  */
 
-import {
-    ILoggerFactory,
-    DefaultLogLevels
-} from "./Common";
 import { getDefaultFactory } from "./Factory";
 
-const defaultFactory: ILoggerFactory<
-    DefaultLogLevels
-> = getDefaultFactory();
-
-export default defaultFactory;
-
-export * from "./Exception";
+export default getDefaultFactory();
 
 export * from "./Common";
 
 export * from "./Factory";
 
-export * from "./ConsoleDriver";
+export * from "./Formatters";
 
-export * from "./ColorfulConsoleDriver";
+export * from "./Drivers/Console";
+
+export * from "./Drivers/ColorfulTTY";

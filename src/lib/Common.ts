@@ -24,12 +24,10 @@ export const DEFAULT_DRIVER = "console";
  */
 export const DEFAULT_SUBJECT = "default";
 
-export const EXCEPTION_TYPE = "litert/logger";
-
 /**
  * The names of default levels.
  */
-export const DEFAULT_LEVEL_NAMES: DefaultLogLevels[] = [
+export const DEFAULT_LEVELS: DefaultLevels[] = [
     "error",
     "notice",
     "warning",
@@ -46,7 +44,7 @@ export const DEFAULT_LEVEL_NAMES: DefaultLogLevels[] = [
  * @param date      The datetime of log.
  * @param traces    The trace-info of log.
  */
-export type ILogFormatter<T, L extends string> = (
+export type IFormatter<T, L extends string> = (
     log: T,
     subject: string,
     level: L,
@@ -54,8 +52,17 @@ export type ILogFormatter<T, L extends string> = (
     traces?: string[]
 ) => string;
 
-export interface ILogDriver {
+export interface IDriver {
 
+    /**
+     * This method is provied to be called by logger, to send logs
+     * to target device.
+     *
+     * @param text      The formatted log text.
+     * @param subject   The subject of log
+     * @param level     The level of log
+     * @param date      The data of log
+     */
     write(
         text: string,
         subject: string,
@@ -76,41 +83,46 @@ export interface IBaseLogger<L extends string> {
     getSubject(): string;
 
     /**
+     * Get the levels list of this logger supports.
+     */
+    getLevels(): L[];
+
+    /**
      * Enable or disable trace info of all levels or determined level of
      * current logger.
      *
-     * @param enable Set to false to disable trace info. (Default: true)
-     * @param lv Determine a level to be disabled tracing.
+     * @param depth Set the depth of tracing stack, by default it's 1.
+     *              Set to 0 to shutdown displaying trace stack.
+     * @param level Determine a level or a list of level to be disabled tracing.
+     *              By default it will be all levels.
      */
-    enableTrace(enable?: boolean, lv?: L): this;
-
-    /**
-     * Enable tracing for all levels of all loggers, or for determined level
-     * of all loggers.
-     *
-     * @param enable Set to false to use short form trace info. (Default: true)
-     * @param lv Determine a level to be enabled tracing.
-     */
-    useFullTrace(enable?: boolean, lv?: L): this;
+    enableTrace(depth?: number, level?: L | L[]): this;
 
     /**
      * Unmute all levels or determined level of current logger.
      *
-     * @param level (Optional) The determined level.
+     * @param level Determine a level or a list of level to be unmuted.
+     *              By default it will be all levels.
      */
-    unmute(level?: L): this;
+    unmute(level?: L | L[]): this;
 
     /**
      * Mute all levels or determined level of current logger.
      *
-     * @param level (Optional) The determined level.
+     * @param level Determine a level or a list of level to be muted.
+     *              By default it will be all levels.
      */
-    mute(level?: L): this;
+    mute(level?: L | L[]): this;
+
+    /**
+     * Flush the logs in driver's buffer.
+     */
+    flush(): void | Promise<void>;
 }
 
 export type LoggerMethod<T, L extends string> = (
     log: T,
-    data?: Date
+    date?: Date
 ) => ILogger<T, L>;
 
 export type ILogger<T, L extends string> = IBaseLogger<L> & Record<
@@ -118,67 +130,78 @@ export type ILogger<T, L extends string> = IBaseLogger<L> & Record<
     LoggerMethod<T, L>
 >;
 
-export type DefaultLogLevels = "error" | "notice" | "warning" | "debug" | "info";
+export type DefaultLevels = "error" | "notice" | "warning" | "debug" | "info";
 
-export interface ILoggerFactory<L extends string> {
+export interface IFactory<L extends string> {
 
     /**
      * Mute all levels of all loggers, or determined level of all loggers.
      *
-     * @param lv Determine a level to be muted.
+     * @param level Determine a level or a list of level to be muted.
+     *              By default it will be all levels.
      */
-    mute(lv?: L): this;
+    mute(level?: L | L[]): this;
 
     /**
      * Enable all levels of all loggers, or determined level of all loggers.
      *
-     * @param lv Determine a level to be enabled.
+     * @param level Determine a level or a list of level to be unmuted.
+     *              By default it will be all levels.
      */
-    unmute(lv?: L): this;
+    unmute(level?: L | L[]): this;
 
     /**
      * Disable or enable trace info for all levels of all loggers, or for
      * determined level of all loggers.
      *
-     * @param enable Set to false to disable trace info. (Default: true)
-     * @param lv Determine a level to be disabled tracing.
+     * @param depth Set the depth of tracing stack, by default it's 1.
+     *              Set to 0 to shutdown displaying trace stack.
+     * @param level Determine a level or a list of level to be disabled tracing.
+     *              By default it will be all levels.
      */
-    enableTrace(enable?: boolean, lv?: L): this;
+    enableTrace(depth?: number, level?: L | L[]): this;
 
     /**
-     * Setup the trace info format for all levels of all loggers, or for
-     * determined level of all loggers.
-     *
-     * @param enable Set to false to use short form trace info. (Default: true)
-     * @param lv Determine a level to be enabled tracing.
-     */
-    useFullTrace(enable?: boolean, lv?: L): this;
-
-    /**
-     * Added a new driver. If the driver of the name already exists, an
-     * exception will be thrown.
+     * Added a new driver.
      *
      * @param name   The unique name of driver
      * @param driver The driver object.
      */
-    registerDriver(name: string, driver: ILogDriver): this;
+    registerDriver(name: string, driver: IDriver): boolean;
 
     /**
      * Find and return an existing driver by its unique name.
      *
      * @param name  The unique name of driver
      */
-    getDriver(name: string): ILogDriver | null;
+    getDriver(name: string): IDriver | null;
+
+    /**
+     * Get the names list of registered drivers.
+     */
+    getDriverNames(): string[];
+
+    /**
+     * Get the subjects list of created loggers.
+     */
+    getSubjects(): string[];
+
+    /**
+     * Get the levels list of this factory supports.
+     */
+    getLevels(): L[];
 
     /**
      * Create a simple text logger.
      *
-     * @param subject The unique subject of logger. (default: default)
-     * @param driver  The driver to write logs. (default: console)
+     * @param subject   The unique subject of logger. (default: default)
+     * @param formatter The formatter helps stringify input data.
+     *                  (default: DEFAULT_TEXT_FORMATTER)
+     * @param driver    The driver to write logs. (default: console)
      */
     createTextLogger(
         subject?: string,
-        formatter?: ILogFormatter<string, L>,
+        formatter?: IFormatter<string, L>,
         driver?: string
     ): ILogger<string, L>;
 
@@ -186,12 +209,13 @@ export interface ILoggerFactory<L extends string> {
      * Create a simple data logger.
      *
      * @param subject The unique subject of logger. (default: default)
-     * @param formatter The formatter helps stringify input data. (default: json)
+     * @param formatter The formatter helps stringify input data.
+     *                  (default: DEFAULT_JSON_FORMATTER)
      * @param driver  The driver to write logs. (default: console)
      */
     createDataLogger<T = any>(
-        subject: string,
-        formatter: ILogFormatter<T, L>,
+        subject?: string,
+        formatter?: IFormatter<T, L>,
         driver?: string
     ): ILogger<T, L>;
 }

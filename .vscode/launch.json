@@ -12,6 +12,7 @@
             "sourceMaps": true,
             "outFiles": [
                 "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/Drivers/*.js",
                 "${workspaceFolder}/samples/*.js"
             ]
         }

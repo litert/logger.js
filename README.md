@@ -31,7 +31,7 @@ npm i @litert/logger@dev --save
 
 ### 简体中文版
 
-- [开发版本](./docs/zh-CN/index.md)
+- [开发版本](./docs/zh-CN/README.md)
 
 ## License
 

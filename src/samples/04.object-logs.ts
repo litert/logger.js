@@ -31,7 +31,7 @@ interface LogInfo {
      * First, create a log controller, giving a subject and a formater.
      */
     let logs = Loggers.createDataLogger<LogInfo>(
-        "Custom-Formatter",
+        "Object-Formatter",
         function(log, subj, lv, dt, traces): string {
 
             if (traces) {
@@ -77,7 +77,7 @@ interface LogInfo {
         result: "failed"
     });
 
-    logs.enableTrace(true);
+    logs.enableTrace();
 
     logs.warning({
         action: "DeleteAccount",
@@ -85,7 +85,7 @@ interface LogInfo {
         result: "succeed"
     });
 
-    logs.useFullTrace(true);
+    logs.enableTrace(10);
 
     logs.notice({
         action: "RegisterAccount",

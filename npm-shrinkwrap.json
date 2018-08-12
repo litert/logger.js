@@ -4,15 +4,10 @@
   "lockfileVersion": 1,
   "requires": true,
   "dependencies": {
-    "@litert/core": {
-      "version": "0.6.0",
-      "resolved": "https://registry.npmjs.org/@litert/core/-/core-0.6.0.tgz",
-      "integrity": "sha512-cbbfhCYzpCxOpl8JjoJ3pVJOi2pOYbUFPLzz0Fwkd1zlzwh9rUSpcZ3EY7Hsa/fweKkVx2VgxSplzM/kRKyNDQ=="
-    },
     "@types/node": {
-      "version": "9.6.27",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-9.6.27.tgz",
-      "integrity": "sha512-fGWGG9Wypv6JZLIrnq9jXFX/FhQzgNccTlojez9hBbQ9UiBdxtc0ONMMe4/vnB2nDgOMDpPR/7HhenUB+Bw5yQ==",
+      "version": "10.5.8",
+      "resolved": "https://registry.npmjs.org/@types/node/-/node-10.5.8.tgz",
+      "integrity": "sha512-sWSjw+bYW/2W+1V3m8tVsm9PKJcxk3NHN7oRqNUfEdofKg0Imbdu1dQbFvLKjZQXEDXRN6IfSMACjJ7Wv4NGCQ==",
       "dev": true
     },
     "typescript": {

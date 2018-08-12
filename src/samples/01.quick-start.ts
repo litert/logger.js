@@ -65,29 +65,29 @@ import Loggers from "../lib";
      * If you wanna trace where the log is logged, just turn on the log-tracing.
      * And now the calling spot will be appended after the logs' output.
      */
-    logs.enableTrace(true);
+    logs.enableTrace();
 
     logs.info("This is INFO log.");
 
     /**
      * Or if you wanna print the whole calling-stack?
      */
-    logs.useFullTrace(true);
+    logs.enableTrace(10);
 
     logs.notice("This is NOTICE log.");
 
-    logs.useFullTrace(false);
+    logs.enableTrace(0);
 
     /**
      * And you can turn on the whole calling-stack for DEBUG level only.
      */
-    logs.useFullTrace(true, "debug");
+    logs.enableTrace(10, "debug");
 
     logs.error("This is ERROR log.");
 
     logs.debug("This is DEBUG log.");
 
-    logs.enableTrace(false);
+    logs.enableTrace(0);
 
     /**
      * Besides, you can pass a Date object for the log, instead of the current

@@ -27,12 +27,11 @@
     "url": "https://github.com/litert/logger.js/issues"
   },
   "homepage": "https://github.com/litert/logger.js#readme",
-  "dependencies": {
-    "@litert/core": "^0.6.0"
-  },
+  "dependencies": {},
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
   "devDependencies": {
+    "@types/node": "^10.5.8",
     "typescript": "^2.9.2"
   },
   "engines": {

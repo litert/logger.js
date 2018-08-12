@@ -14,30 +14,38 @@
  *  limitations under the License.
  */
 
-import Loggers from "../lib";
+// tslint:disable:no-console
 
-interface LogInfo {
+import { IDriver } from "../Common";
 
-    action: string;
+class ConsoleDriver
+implements IDriver {
 
-    result: number;
+    public write(
+        text: string,
+        subject: string,
+        level: string,
+        date: Date
+    ): void {
+
+        return console.log(text);
+    }
+
+    public flush(): void {
+
+        // do nothing.
+    }
+
+    public close(): void {
+
+        // do nothing.
+    }
 }
 
-let log = Loggers.createDataLogger<LogInfo>("data-logger", function(
-    data: LogInfo,
-    subject: string,
-    level: string,
-    date: Date,
-    trace
-): string {
+/**
+ * Create a console driver.
+ */
+export function createConsoleDriver(): IDriver {
 
-    // tslint:disable-next-line:max-line-length
-    return `${date.toISOString()} - ${level} - ${subject} - Executed action ${data.action}, with result ${data.result}.`;
-});
-
-Loggers.unmute();
-
-log.debug({
-    action: "SendMessage",
-    result: 1
-});
+    return new ConsoleDriver();
+}

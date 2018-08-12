@@ -14,47 +14,9 @@
  *  limitations under the License.
  */
 
-// tslint:disable:no-console
-
 export interface ILevelOptions {
 
     "enabled": boolean;
 
-    "trace": boolean;
-
-    "fullTrace": boolean;
-}
-
-export function DEFAULT_TEXT_FORMATTER(
-    log: string,
-    subject: string,
-    level: string,
-    date: Date,
-    traces?: string[]
-): string {
-
-    if (traces) {
-
-        return `[${date.toISOString()}][${level}] ${subject}: ${log}
-  at ${traces.join("\n  at ")}`;
-    }
-
-    return `[${date.toISOString()}][${level}] ${subject}: ${log}`;
-}
-
-export function DEFAULT_FORMATTER(
-    log: any,
-    subject: string,
-    level: string,
-    date: Date,
-    traces?: string[]
-): string {
-
-    return JSON.stringify({
-        subject,
-        level,
-        date: date.getTime(),
-        log,
-        traces
-    });
+    "trace": number;
 }

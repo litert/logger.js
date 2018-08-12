@@ -14,12 +14,18 @@
  *  limitations under the License.
  */
 
-// tslint:disable:no-console
+import Loggers, { IDriver } from "../lib";
+import * as fs from "fs";
 
-import { ILogDriver } from "./Common";
+class FileLogDriver
+implements IDriver {
 
-export class ConsoleDriver
-implements ILogDriver {
+    private _ws: fs.WriteStream;
+
+    public constructor(file: string) {
+
+        this._ws = fs.createWriteStream(file);
+    }
 
     public write(
         text: string,
@@ -28,16 +34,42 @@ implements ILogDriver {
         date: Date
     ): void {
 
-        return console.log(text);
+        if (this._ws) {
+
+            this._ws.write(text + "\n");
+        }
     }
 
-    public flush(): void {
+    public flush(): void | Promise<void> {
 
-        // do nothing.
+        // No buffer here
+        return;
     }
 
-    public close(): void {
+    public close(): void | Promise<void> {
 
-        // do nothing.
+        this._ws.end();
+        delete this._ws;
     }
 }
+
+const fd = new FileLogDriver("a.log");
+
+Loggers.registerDriver(
+    "file-a",
+    fd
+);
+
+const logs = Loggers.createTextLogger(
+    "Sample",
+    undefined,
+    "file-a"
+);
+
+logs.unmute();
+
+logs.info("HI");
+
+logs.debug("Hello");
+
+fd.close();

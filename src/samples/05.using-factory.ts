@@ -15,8 +15,8 @@
  */
 
 import {
-    createLoggerFactory,
-    DEFAULT_LEVEL_NAMES
+    createFactory,
+    DEFAULT_LEVELS
 } from "../lib";
 
 interface LogInfo {
@@ -30,8 +30,8 @@ interface LogInfo {
 
 (function objectLogs(): void {
 
-    let factory1 = createLoggerFactory(DEFAULT_LEVEL_NAMES);
-    let factory2 = createLoggerFactory(DEFAULT_LEVEL_NAMES);
+    let factory1 = createFactory(DEFAULT_LEVELS);
+    let factory2 = createFactory(DEFAULT_LEVELS);
 
     /**
      * First, create a log controller, giving a subject.
@@ -107,7 +107,7 @@ interface LogInfo {
         result: "failed"
     });
 
-    logs1.enableTrace(true);
+    logs1.enableTrace();
 
     logs1.warning({
         action: "DeleteAccount",
@@ -115,7 +115,7 @@ interface LogInfo {
         result: "succeed"
     });
 
-    logs1.useFullTrace(true);
+    logs1.enableTrace(10);
 
     logs1.debug({
         action: "RegisterAccount",
