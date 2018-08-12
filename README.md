@@ -29,9 +29,7 @@ npm i @litert/logger@dev --save
 
 ## Document
 
-### 简体中文版
-
-- [开发版本](./docs/zh-CN/README.md)
+- [简体中文版](./docs/zh-CN/README.md)
 
 ## License
 

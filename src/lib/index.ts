@@ -13,10 +13,15 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-
 import { getDefaultFactory } from "./Factory";
+import {
+    IFactory,
+    DefaultLevels
+} from "./Common";
 
-export default getDefaultFactory();
+const _default: IFactory<DefaultLevels> = getDefaultFactory();
+
+export default _default;
 
 export * from "./Common";
 

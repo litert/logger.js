@@ -1,6 +1,6 @@
 {
   "name": "@litert/logger",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "A logs-recorder for LiteRT framework.",
   "main": "lib/index.js",
   "scripts": {
