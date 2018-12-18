@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -14,14 +14,8 @@
  *  limitations under the License.
  */
 import { getDefaultFactory } from "./Factory";
-import {
-    IFactory,
-    DefaultLevels
-} from "./Common";
 
-const _default: IFactory<DefaultLevels> = getDefaultFactory();
-
-export default _default;
+export default getDefaultFactory();
 
 export * from "./Common";
 

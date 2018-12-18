@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -55,7 +55,7 @@ export type IFormatter<T, L extends string> = (
 export interface IDriver {
 
     /**
-     * This method is provied to be called by logger, to send logs
+     * This method is provided to be called by logger, to send logs
      * to target device.
      *
      * @param text      The formatted log text.
@@ -70,8 +70,17 @@ export interface IDriver {
         date: Date
     ): void;
 
+    /**
+     * Flush all logs in the log driver buffer.
+     */
     flush(): void | Promise<void>;
 
+    /**
+     * Shutdown the driver.
+     *
+     * This method should invoke method `flush` automatically before closing
+     * driver.
+     */
     close(): void | Promise<void>;
 }
 
@@ -120,18 +129,30 @@ export interface IBaseLogger<L extends string> {
     flush(): void | Promise<void>;
 }
 
+/**
+ * The logging methods signature.
+ */
 export type LoggerMethod<T, L extends string> = (
     log: T,
     date?: Date
 ) => ILogger<T, L>;
 
+/**
+ * The logger interface.
+ */
 export type ILogger<T, L extends string> = IBaseLogger<L> & Record<
     L,
     LoggerMethod<T, L>
 >;
 
+/**
+ * The default levels of loggers.
+ */
 export type DefaultLevels = "error" | "notice" | "warning" | "debug" | "info";
 
+/**
+ * The logger factory interface.
+ */
 export interface IFactory<L extends string> {
 
     /**

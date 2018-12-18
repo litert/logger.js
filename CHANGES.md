@@ -1,5 +1,10 @@
 # Changes Logs
 
+## v1.0.0
+
+- Upgrade to TypeScript v3.2.x.
+- Added some comments.
+
 ## v0.3.0
 
 - Rebuild for flexibility and performance.

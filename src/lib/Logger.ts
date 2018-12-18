@@ -5,7 +5,7 @@
  *  you may not use this file except in compliance with the License.
  *  You may obtain a copy of the License at
  *
- *    http://www.apache.org/licenses/LICENSE-2.0
+ *    https://www.apache.org/licenses/LICENSE-2.0
  *
  *  Unless required by applicable law or agreed to in writing, software
  *  distributed under the License is distributed on an "AS IS" BASIS,
@@ -29,6 +29,9 @@ function _emptyLogMethod(this: Logger, x: string) {
     return this;
 }
 
+/**
+ * Create a logging method, works like a JIT compiler.
+ */
 function createLogMethod(
     subject: string,
     level: string,
@@ -97,12 +100,24 @@ implements IBaseLogger<string> {
      */
     protected _options: Record<string, ILevelOptions>;
 
+    /**
+     * The subject of current logger.
+     */
     protected _subject: string;
 
+    /**
+     * The log formatter of current logger.
+     */
     protected _formatter!: IFormatter<any, string>;
 
+    /**
+     * The log output driver of current logger.
+     */
     protected _driver: IDriver;
 
+    /**
+     * The log levels of current logger.
+     */
     protected _levels: string[];
 
     public constructor(

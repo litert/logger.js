@@ -7,12 +7,91 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "[LiteRT/Logger] Sample: Use built-in colorful driver.",
-            "program": "${workspaceFolder}/src/samples/03.built-in-colorful-driver.ts",
+            "name": "[LiteRT/Logger] Sample 01: Quick Start",
+            "program": "${workspaceFolder}/src/samples/01.quick-start.ts",
             "sourceMaps": true,
+            "stopOnEntry": true,
             "outFiles": [
                 "${workspaceFolder}/lib/*.js",
                 "${workspaceFolder}/lib/Drivers/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 02: Custom Formatter",
+            "program": "${workspaceFolder}/src/samples/02.custom-formatter.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 03: Built-In Colorful TTY Driver",
+            "program": "${workspaceFolder}/src/samples/03.built-in-colorful-driver.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 04: Object Logs",
+            "program": "${workspaceFolder}/src/samples/04.object-logs.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 05: Using Factory",
+            "program": "${workspaceFolder}/src/samples/05.using-factory.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 06: Custom Levels",
+            "program": "${workspaceFolder}/src/samples/06.custom-levels.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
+                "${workspaceFolder}/samples/*.js"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "[LiteRT/Logger] Sample 07: Custom Driver",
+            "program": "${workspaceFolder}/src/samples/07.custom-driver.ts",
+            "sourceMaps": true,
+            "stopOnEntry": true,
+            "outFiles": [
+                "${workspaceFolder}/lib/*.js",
+                "${workspaceFolder}/lib/**/*.js",
                 "${workspaceFolder}/samples/*.js"
             ]
         }
