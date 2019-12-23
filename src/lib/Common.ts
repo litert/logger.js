@@ -203,6 +203,46 @@ export interface IFactory<L extends string> {
     getDriverNames(): string[];
 
     /**
+     * Added a new formatter for data logger.
+     *
+     * @param name          The unique name of formatter
+     * @param formatter     The formatter.
+     */
+    registerDataFormatter<T>(name: string, formatter: IFormatter<T, string>): boolean;
+
+    /**
+     * Added a new formatter for text logger.
+     *
+     * @param name          The unique name of formatter
+     * @param formatter     The formatter.
+     */
+    registerTextFormatter(name: string, formatter: IFormatter<string, string>): boolean;
+
+    /**
+     * Find and return an existing formatter by its unique name.
+     *
+     * @param name  The unique name of data formatter
+     */
+    getDataFormatter<T = any>(name: string): IFormatter<T, string>;
+
+    /**
+     * Find and return an existing formatter by its unique name.
+     *
+     * @param name  The unique name of text formatter
+     */
+    getTextFormatter(name: string): IFormatter<string, string>;
+
+    /**
+     * Get the names list of registered data formatters.
+     */
+    getDataFormatterNames(): string[];
+
+    /**
+     * Get the names list of registered text formatters.
+     */
+    getTextFormatterNames(): string[];
+
+    /**
      * Get the subjects list of created loggers.
      */
     getSubjects(): string[];
@@ -222,7 +262,7 @@ export interface IFactory<L extends string> {
      */
     createTextLogger(
         subject?: string,
-        formatter?: IFormatter<string, L>,
+        formatter?: IFormatter<string, L> | string,
         driver?: string
     ): ILogger<string, L>;
 
@@ -236,7 +276,7 @@ export interface IFactory<L extends string> {
      */
     createDataLogger<T = any>(
         subject?: string,
-        formatter?: IFormatter<T, L>,
+        formatter?: IFormatter<T, L> | string,
         driver?: string
     ): ILogger<T, L>;
 }

@@ -47,11 +47,22 @@ implements IFactory<string> {
 
     protected _globalConfig: Record<string, ILevelOptions>;
 
+    protected _formatters: Record<"text" | "data", Record<string, IFormatter<any, string>>>;
+
     protected _levels: string[];
 
     public constructor(levels: string[] = DEFAULT_LEVELS) {
 
         this._loggers = {};
+
+        this._formatters = {
+            "text": {
+                "default": DEFAULT_TEXT_FORMATTER
+            },
+            "data": {
+                "default": DEFAULT_JSON_FORMATTER
+            }
+        };
 
         this._drivers = {
             [DEFAULT_DRIVER]: createConsoleDriver()
@@ -76,6 +87,22 @@ implements IFactory<string> {
     public getDriverNames(): string[] {
 
         return Object.keys(this._drivers);
+    }
+
+    /**
+     * Get the names list of registered formatters.
+     */
+    public getDataFormatterNames(): string[] {
+
+        return Object.keys(this._formatters.data);
+    }
+
+    /**
+     * Get the names list of registered formatters.
+     */
+    public getTextFormatterNames(): string[] {
+
+        return Object.keys(this._formatters.text);
     }
 
     /**
@@ -183,22 +210,69 @@ implements IFactory<string> {
         return this._drivers[name] || null;
     }
 
+    public getDataFormatter<T = any>(name: string): IFormatter<T, string> {
+
+        return this._formatters.data[name] || null;
+    }
+
+    public getTextFormatter(name: string): IFormatter<string, string> {
+
+        return this._formatters.text[name] || null;
+    }
+
+    public registerDataFormatter<T>(
+        name: string,
+        formatter: IFormatter<T, string>
+    ): boolean {
+
+        if (this._formatters.data[name]) {
+
+            return false;
+        }
+
+        this._formatters.data[name] = formatter;
+
+        return true;
+    }
+
+    public registerTextFormatter(
+        name: string,
+        formatter: IFormatter<string, string>
+    ): boolean {
+
+        if (this._formatters.text[name]) {
+
+            return false;
+        }
+
+        this._formatters.text[name] = formatter;
+
+        return true;
+    }
+
     public createTextLogger(
         subject: string = DEFAULT_SUBJECT,
-        formatter: IFormatter<string, string> = DEFAULT_TEXT_FORMATTER,
+        formatter: IFormatter<string, string> | string = "default",
         driver: string = DEFAULT_DRIVER
     ): ILogger<string, string> {
 
+        const formatterFn = typeof formatter === "string" ? this._formatters.text[formatter] : formatter;
+
+        if (!formatterFn) {
+
+            throw new ReferenceError(`Unknown formatter ${formatter}`);
+        }
+
         return this.createDataLogger<string>(
             subject,
-            formatter,
+            formatterFn,
             driver
         );
     }
 
     public createDataLogger<T>(
         subject: string = DEFAULT_SUBJECT,
-        formatter: IFormatter<T, string> = DEFAULT_JSON_FORMATTER,
+        formatter: IFormatter<T, string> | string = "default",
         driver: string = DEFAULT_DRIVER
     ): ILogger<T, string> {
 
@@ -207,11 +281,18 @@ implements IFactory<string> {
             return this._loggers[subject];
         }
 
+        const formatterFn = typeof formatter === "string" ? this._formatters.data[formatter] : formatter;
+
+        if (!formatterFn) {
+
+            throw new ReferenceError(`Unknown formatter ${formatter}`);
+        }
+
         return this._loggers[subject] = new Logger(
             subject,
             this.getDriver(driver),
             this._globalConfig,
-            formatter,
+            formatterFn,
             this._levels
         ) as any;
     }

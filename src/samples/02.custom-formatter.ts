@@ -21,8 +21,8 @@ import Loggers from "../lib";
     /**
      * First, create a log controller, giving a subject and a formater.
      */
-    let logs = Loggers.createTextLogger(
-        "Custom-Formatter",
+    let logs1 = Loggers.createTextLogger(
+        "Custom-Formatter 1",
         function(log, subj, lv, dt, traces): string {
 
             if (traces) {
@@ -42,26 +42,80 @@ import Loggers from "../lib";
      *
      * Here we use method "unmute" to turn on the output of all levels of logs.
      */
-    logs.unmute();
+    logs1.unmute();
 
     /**
      * Output a log of INFO level.
      */
-    logs.info("This is INFO log.");
+    logs1.info("This is INFO log.");
 
-    logs.error("This is ERROR log.");
+    logs1.error("This is ERROR log.");
 
     /**
      * Now the DEBUG logs couldn't be output (No errors, but ignored.)
      */
-    logs.debug("This is DEBUG log.");
+    logs1.debug("This is DEBUG log.");
 
-    logs.enableTrace();
+    logs1.enableTrace();
 
-    logs.warning("This is WARNING log.");
+    logs1.warning("This is WARNING log.");
 
-    logs.enableTrace(10);
+    logs1.enableTrace(10);
 
-    logs.notice("This is NOTICE log.");
+    logs1.notice("This is NOTICE log.");
 
+    /**
+     * Or used a pre-registered formatter.
+     */
+
+    /**
+     * First, create a log controller, giving a subject and a formater.
+     */
+    Loggers.registerTextFormatter(
+        "custom_text_formatter",
+        function(log, subj, lv, dt, traces): string {
+
+            if (traces) {
+
+                return `${dt.toISOString()} - ${subj} - ${lv} - ${log}
+
+  ${traces.join("\n  ")}
+`;
+            }
+
+            return `${dt.toISOString()} - ${subj} - ${lv} - ${log}`;
+        }
+    );
+
+    let logs2 = Loggers.createTextLogger(
+        "Custom-Formatter 2",
+        "custom_text_formatter"
+    );
+
+    /**
+     * By default, all the levels of logs are muted.
+     *
+     * Here we use method "unmute" to turn on the output of all levels of logs.
+     */
+    logs2.unmute();
+
+    /**
+     * Output a log of INFO level.
+     */
+    logs2.info("This is INFO log.");
+
+    logs2.error("This is ERROR log.");
+
+    /**
+     * Now the DEBUG logs couldn't be output (No errors, but ignored.)
+     */
+    logs2.debug("This is DEBUG log.");
+
+    logs2.enableTrace();
+
+    logs2.warning("This is WARNING log.");
+
+    logs2.enableTrace(10);
+
+    logs2.notice("This is NOTICE log.");
 })();

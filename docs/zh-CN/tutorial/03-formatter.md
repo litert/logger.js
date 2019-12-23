@@ -1,5 +1,7 @@
 # 日志格式化
 
+## 格式化函数
+
 我们注意到，日志的输出都是如下格式的
 
 ```
@@ -94,4 +96,34 @@ Sun Aug 12 2018 17:04:26 GMT+0800 (中国标准时间) - Custom-Formatter - info
 Sun Aug 12 2018 17:04:26 GMT+0800 (中国标准时间) - Custom-Formatter - info - world
 Trace Stack:
   formatterDemo (/home/fenying/logger/samples/demo.js:99:4)
+```
+
+## 预注册格式化函数
+
+通常来说，一个格式化函数是反复使用的，所以，可以通过 `IFactory.registerTextFormatter` 和
+`IFactory.registerDataFormatter` 两个方法，将一个格式化函数进行预注册，然后通过注册的名称即可使用。
+
+```ts
+
+Loggers.registerTextFormatter(
+    "custom_formatter_1",
+    function(text, subject, level, date, traces): string {
+
+        let ret = `${date} - ${subject} - ${level} - ${text}`;
+
+        if (traces) {
+
+            ret += `\nTrace Stack:\n  ${traces.join("\n  ")}`;
+        }
+
+        return ret;
+    }
+);
+
+const log = Loggers.createTextLogger(
+    "Custom-Formatter",
+    "custom_formatter_1"
+);
+
+log.info("Hello");
 ```

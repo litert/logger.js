@@ -55,6 +55,46 @@ interface IFactory<
     getDriverNames(): string[];
 
     /**
+     * 注册一个新的自定义输入类型的日志格式化函数。
+     *
+     * @param name          日志格式化函数的唯一注册名称。
+     * @param formatter     日志格式化函数
+     */
+    registerDataFormatter<T>(name: string, formatter: IFormatter<T, string>): boolean;
+
+    /**
+     * 注册一个新的文本型的日志格式化函数。
+     *
+     * @param name          日志格式化函数的唯一注册名称。
+     * @param formatter     日志格式化函数
+     */
+    registerTextFormatter(name: string, formatter: IFormatter<string, string>): boolean;
+
+    /**
+     * 根据唯一注册名称获取一个自定义输入类型的日志格式化函数。
+     *
+     * @param name  唯一注册名称
+     */
+    getDataFormatter<T = any>(name: string): IFormatter<T, string>;
+
+    /**
+     * 根据唯一注册名称获取一个文本型的日志格式化函数。
+     *
+     * @param name  唯一注册名称
+     */
+    getTextFormatter(name: string): IFormatter<string, string>;
+
+    /**
+     * 获取所有已经注册的自定义输入类型日志格式化函数的名称。
+     */
+    getDataFormatterNames(): string[];
+
+    /**
+     * 获取所有已经注册的文本型日志格式化函数的名称。
+     */
+    getTextFormatterNames(): string[];
+
+    /**
      * 获取所有该工厂创建的日志控制器对象的主题列表。
      */
     getSubjects(): string[];
@@ -70,12 +110,12 @@ interface IFactory<
      * 已经存在则返回已存在的控制器对象。
      *
      * @param subject   日志的主题。(默认值：default)
-     * @param formatter 日志格式化函数。(默认值：DEFAULT_TEXT_FORMATTER)
+     * @param formatter 日志格式化函数或者预注册的格式化函数唯一名称。(默认值：default)
      * @param driver    已注册的驱动名称。(默认值：console)
      */
     createTextLogger(
         subject?: string,
-        formatter?: IFormatter<string, L>,
+        formatter?: IFormatter<string, L> | string,
         driver?: string
     ): ILogger<string, L>;
 
@@ -85,12 +125,12 @@ interface IFactory<
      * 已经存在则返回已存在的控制器对象。
      *
      * @param subject   日志的主题。(默认值：default)
-     * @param formatter 日志格式化函数。(默认值：DEFAULT_JSON_FORMATTER)
+     * @param formatter 日志格式化函数或者预注册的格式化函数唯一名称。(默认值：default)
      * @param driver    已注册的驱动名称。(默认值：console)
      */
     createDataLogger<T = any>(
         subject?: string,
-        formatter?: IFormatter<T, L>,
+        formatter?: IFormatter<T, L> | string,
         driver?: string
     ): ILogger<T, L>;
 }

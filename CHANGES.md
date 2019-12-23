@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v1.1.0
+
+- Added pre-registered formatter supports.
+
 ## v1.0.0
 
 - Upgrade to TypeScript v3.2.x.
