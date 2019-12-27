@@ -208,7 +208,7 @@ export interface IFactory<L extends string> {
      * @param name          The unique name of formatter
      * @param formatter     The formatter.
      */
-    registerDataFormatter<T>(name: string, formatter: IFormatter<T, string>): boolean;
+    registerDataFormatter<T>(name: string, formatter: IFormatter<T, L>): boolean;
 
     /**
      * Added a new formatter for text logger.
@@ -216,7 +216,7 @@ export interface IFactory<L extends string> {
      * @param name          The unique name of formatter
      * @param formatter     The formatter.
      */
-    registerTextFormatter(name: string, formatter: IFormatter<string, string>): boolean;
+    registerTextFormatter(name: string, formatter: IFormatter<string, L>): boolean;
 
     /**
      * Find and return an existing formatter by its unique name.

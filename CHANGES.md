@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v1.1.1
+
+- Fixed the pre-registered formatter.
+
 ## v1.1.0
 
 - Added pre-registered formatter supports.
