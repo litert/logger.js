@@ -146,7 +146,7 @@ log.info("See the trace info below.");
 
 ```
 [2018-08-12T08:32:08.341Z][info] Trace: See the trace info below.
-  at traceDemo (/home/fenying/logger/samples/demo.js:58:4)
+  at traceDemo (/home/fenying/logger/examples/demo.js:58:4)
 ```
 
 可以看到日志的输出位置。

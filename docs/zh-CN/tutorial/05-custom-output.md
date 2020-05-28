@@ -54,7 +54,7 @@ Loggers.registerDriver(
 
 ```ts
 const logs = Loggers.createTextLogger(
-    "Sample",
+    "Example",
     undefined, // 使用默认的格式化函数
     "file-a"
 );
@@ -150,7 +150,7 @@ Loggers.registerDriver(
 );
 
 const logs = Loggers.createTextLogger(
-    "Sample",
+    "Example",
     undefined,
     "file-a"
 );

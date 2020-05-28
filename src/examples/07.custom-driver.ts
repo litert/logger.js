@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,8 +14,8 @@
  *  limitations under the License.
  */
 
-import Loggers, { IDriver } from "../lib";
-import * as fs from "fs";
+import Loggers, { IDriver } from '../lib';
+import * as fs from 'fs';
 
 class FileLogDriver
 implements IDriver {
@@ -27,16 +27,11 @@ implements IDriver {
         this._ws = fs.createWriteStream(file);
     }
 
-    public write(
-        text: string,
-        subject: string,
-        level: string,
-        date: Date
-    ): void {
+    public write(text: string): void {
 
         if (this._ws) {
 
-            this._ws.write(text + "\n");
+            this._ws.write(text + '\n');
         }
     }
 
@@ -53,23 +48,24 @@ implements IDriver {
     }
 }
 
-const fd = new FileLogDriver("a.log");
+const fd = new FileLogDriver('a.log');
 
 Loggers.registerDriver(
-    "file-a",
+    'file-a',
     fd
 );
 
 const logs = Loggers.createTextLogger(
-    "Sample",
+    'Example',
     undefined,
-    "file-a"
+    'file-a'
 );
 
 logs.unmute();
 
-logs.info("HI");
+logs.info('HI');
 
-logs.debug("Hello");
+logs.debug('Hello');
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises
 fd.close();

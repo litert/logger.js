@@ -21,12 +21,6 @@ Install by NPM:
 npm i @litert/logger --save
 ```
 
-Or install the developing (unstable) version for newest features:
-
-```sh
-npm i @litert/logger@dev --save
-```
-
 ## Document
 
 - [简体中文版](./docs/zh-CN/README.md)

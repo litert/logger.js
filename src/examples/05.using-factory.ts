@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,34 +17,34 @@
 import {
     createFactory,
     DEFAULT_LEVELS
-} from "../lib";
+} from '../lib';
 
 interface LogInfo {
 
-    "action": string;
+    'action': string;
 
-    "user": string;
+    'user': string;
 
-    "result": "succeed" | "failed";
+    'result': 'succeed' | 'failed';
 }
 
 (function objectLogs(): void {
 
-    let factory1 = createFactory(DEFAULT_LEVELS);
-    let factory2 = createFactory(DEFAULT_LEVELS);
+    const factory1 = createFactory(DEFAULT_LEVELS);
+    const factory2 = createFactory(DEFAULT_LEVELS);
 
     /**
      * First, create a log controller, giving a subject.
      */
-    let logs1 = factory1.createDataLogger<LogInfo>(
-        "Using-Factory-1",
+    const logs1 = factory1.createDataLogger<LogInfo>(
+        'Using-Factory-1',
         function(log, subj, lv, dt, traces): string {
 
             if (traces) {
 
                 return `${dt.toISOString()} - ${subj} - ${lv} - ${log.user} - ${log.action} - ${log.result}
 
-  ${traces.join("\n  ")}
+  ${traces.join('\n  ')}
 `;
             }
 
@@ -52,15 +52,15 @@ interface LogInfo {
         }
     );
 
-    let logs2 = factory2.createDataLogger<LogInfo>(
-        "Using-Factory-2",
+    const logs2 = factory2.createDataLogger<LogInfo>(
+        'Using-Factory-2',
         function(log, subj, lv, dt, traces): string {
 
             if (traces) {
 
                 return `${dt.toISOString()} - ${subj} - ${lv} - ${log.user} - ${log.action} - ${log.result}
 
-  ${traces.join("\n  ")}
+  ${traces.join('\n  ')}
 `;
             }
 
@@ -77,9 +77,9 @@ interface LogInfo {
      * Output a log of INFO level.
      */
     logs1.info({
-        action: "Login",
-        user: "admin",
-        result: "succeed"
+        action: 'Login',
+        user: 'admin',
+        result: 'succeed'
     });
 
     /**
@@ -87,40 +87,40 @@ interface LogInfo {
      * Because controllers from different factory are isolated.
      */
     logs2.info({
-        action: "Login",
-        user: "admin",
-        result: "succeed"
+        action: 'Login',
+        user: 'admin',
+        result: 'succeed'
     });
 
     logs1.error({
-        action: "Login",
-        user: "admin",
-        result: "failed"
+        action: 'Login',
+        user: 'admin',
+        result: 'failed'
     });
 
     /**
      * Now the DEBUG logs couldn't be output (No errors, but ignored.)
      */
     logs1.error({
-        action: "Login",
-        user: "sofia",
-        result: "failed"
+        action: 'Login',
+        user: 'sofia',
+        result: 'failed'
     });
 
     logs1.enableTrace();
 
     logs1.warning({
-        action: "DeleteAccount",
-        user: "sofia",
-        result: "succeed"
+        action: 'DeleteAccount',
+        user: 'sofia',
+        result: 'succeed'
     });
 
     logs1.enableTrace(10);
 
     logs1.debug({
-        action: "RegisterAccount",
-        user: "john",
-        result: "succeed"
+        action: 'RegisterAccount',
+        user: 'john',
+        result: 'succeed'
     });
 
 })();

@@ -1,5 +1,10 @@
 # Changes Logs
 
+## v1.1.2
+
+- Switched to ESLint.
+- Added TypeScript declaration map.
+
 ## v1.1.1
 
 - Fixed the pre-registered formatter.

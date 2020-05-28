@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -17,22 +17,22 @@
 /**
  * The name of default driver.
  */
-export const DEFAULT_DRIVER = "console";
+export const DEFAULT_DRIVER = 'console';
 
 /**
  * The name of default subject.
  */
-export const DEFAULT_SUBJECT = "default";
+export const DEFAULT_SUBJECT = 'default';
 
 /**
  * The names of default levels.
  */
 export const DEFAULT_LEVELS: DefaultLevels[] = [
-    "error",
-    "notice",
-    "warning",
-    "debug",
-    "info"
+    'error',
+    'notice',
+    'warning',
+    'debug',
+    'info'
 ];
 
 /**
@@ -148,7 +148,7 @@ export type ILogger<T, L extends string> = IBaseLogger<L> & Record<
 /**
  * The default levels of loggers.
  */
-export type DefaultLevels = "error" | "notice" | "warning" | "debug" | "info";
+export type DefaultLevels = 'error' | 'notice' | 'warning' | 'debug' | 'info';
 
 /**
  * The logger factory interface.

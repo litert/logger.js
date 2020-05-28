@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,18 +14,18 @@
  *  limitations under the License.
  */
 
-import Logger from "./Logger";
+import Logger from './Logger';
 
 import {
     ILevelOptions
-} from "./Internal";
+} from './Internal';
 
 import {
     DEFAULT_JSON_FORMATTER,
     DEFAULT_TEXT_FORMATTER
-} from "./Formatters";
+} from './Formatters';
 
-import { createConsoleDriver } from "./Drivers/Console";
+import { createConsoleDriver } from './Drivers/Console';
 
 import {
     IFactory,
@@ -36,7 +36,7 @@ import {
     DefaultLevels,
     IDriver,
     DEFAULT_LEVELS
-} from "./Common";
+} from './Common';
 
 class LoggerFactory
 implements IFactory<string> {
@@ -47,7 +47,7 @@ implements IFactory<string> {
 
     protected _globalConfig: Record<string, ILevelOptions>;
 
-    protected _formatters: Record<"text" | "data", Record<string, IFormatter<any, string>>>;
+    protected _formatters: Record<'text' | 'data', Record<string, IFormatter<any, string>>>;
 
     protected _levels: string[];
 
@@ -56,11 +56,11 @@ implements IFactory<string> {
         this._loggers = {};
 
         this._formatters = {
-            "text": {
-                "default": DEFAULT_TEXT_FORMATTER
+            'text': {
+                'default': DEFAULT_TEXT_FORMATTER
             },
-            "data": {
-                "default": DEFAULT_JSON_FORMATTER
+            'data': {
+                'default': DEFAULT_JSON_FORMATTER
             }
         };
 
@@ -72,7 +72,7 @@ implements IFactory<string> {
 
         this._globalConfig = {};
 
-        for (let lv of levels) {
+        for (const lv of levels) {
 
             this._globalConfig[lv] = {
                 enabled: false,
@@ -127,17 +127,17 @@ implements IFactory<string> {
 
             levels = this._levels;
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let level of levels) {
+        for (const level of levels) {
 
             this._globalConfig[level].enabled = false;
         }
 
-        for (let subject in this._loggers) {
+        for (const subject in this._loggers) {
 
             this._loggers[subject].mute(levels);
         }
@@ -151,17 +151,17 @@ implements IFactory<string> {
 
             levels = this._levels;
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let level of levels) {
+        for (const level of levels) {
 
             this._globalConfig[level].enabled = true;
         }
 
-        for (let subject in this._loggers) {
+        for (const subject in this._loggers) {
 
             this._loggers[subject].unmute(levels);
         }
@@ -175,16 +175,16 @@ implements IFactory<string> {
 
             levels = this._levels.slice();
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let lv of levels) {
+        for (const lv of levels) {
 
             this._globalConfig[lv].trace = depth;
 
-            for (let subject in this._loggers) {
+            for (const subject in this._loggers) {
 
                 this._loggers[subject].enableTrace(depth, lv);
             }
@@ -252,11 +252,11 @@ implements IFactory<string> {
 
     public createTextLogger(
         subject: string = DEFAULT_SUBJECT,
-        formatter: IFormatter<string, string> | string = "default",
+        formatter: IFormatter<string, string> | string = 'default',
         driver: string = DEFAULT_DRIVER
     ): ILogger<string, string> {
 
-        const formatterFn = typeof formatter === "string" ? this._formatters.text[formatter] : formatter;
+        const formatterFn = typeof formatter === 'string' ? this._formatters.text[formatter] : formatter;
 
         if (!formatterFn) {
 
@@ -272,7 +272,7 @@ implements IFactory<string> {
 
     public createDataLogger<T>(
         subject: string = DEFAULT_SUBJECT,
-        formatter: IFormatter<T, string> | string = "default",
+        formatter: IFormatter<T, string> | string = 'default',
         driver: string = DEFAULT_DRIVER
     ): ILogger<T, string> {
 
@@ -281,7 +281,7 @@ implements IFactory<string> {
             return this._loggers[subject];
         }
 
-        const formatterFn = typeof formatter === "string" ? this._formatters.data[formatter] : formatter;
+        const formatterFn = typeof formatter === 'string' ? this._formatters.data[formatter] : formatter;
 
         if (!formatterFn) {
 
@@ -311,7 +311,7 @@ export function createFactory<
 /**
  * The default factory object.
  */
-const factory = createFactory<DefaultLevels>(DEFAULT_LEVELS);
+const factory = createFactory(DEFAULT_LEVELS);
 
 /**
  * Get the default factory object.

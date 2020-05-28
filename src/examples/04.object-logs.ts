@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,15 +14,15 @@
  *  limitations under the License.
  */
 
-import Loggers from "../lib";
+import Loggers from '../lib';
 
 interface LogInfo {
 
-    "action": string;
+    'action': string;
 
-    "user": string;
+    'user': string;
 
-    "result": "succeed" | "failed";
+    'result': 'succeed' | 'failed';
 }
 
 (function objectLogs(): void {
@@ -30,15 +30,15 @@ interface LogInfo {
     /**
      * First, create a log controller, giving a subject and a formater.
      */
-    let logs = Loggers.createDataLogger<LogInfo>(
-        "Object-Formatter",
+    const logs = Loggers.createDataLogger<LogInfo>(
+        'Object-Formatter',
         function(log, subj, lv, dt, traces): string {
 
             if (traces) {
 
                 return `${dt.toISOString()} - ${subj} - ${lv} - ${log.user} - ${log.action} - ${log.result}
 
-  ${traces.join("\n  ")}
+  ${traces.join('\n  ')}
 `;
             }
 
@@ -57,40 +57,40 @@ interface LogInfo {
      * Output a log of INFO level.
      */
     logs.info({
-        action: "Login",
-        user: "admin",
-        result: "succeed"
+        action: 'Login',
+        user: 'admin',
+        result: 'succeed'
     });
 
     logs.error({
-        action: "Login",
-        user: "admin",
-        result: "failed"
+        action: 'Login',
+        user: 'admin',
+        result: 'failed'
     });
 
     /**
      * Now the DEBUG logs couldn't be output (No errors, but ignored.)
      */
     logs.debug({
-        action: "Login",
-        user: "sofia",
-        result: "failed"
+        action: 'Login',
+        user: 'sofia',
+        result: 'failed'
     });
 
     logs.enableTrace();
 
     logs.warning({
-        action: "DeleteAccount",
-        user: "sofia",
-        result: "succeed"
+        action: 'DeleteAccount',
+        user: 'sofia',
+        result: 'succeed'
     });
 
     logs.enableTrace(10);
 
     logs.notice({
-        action: "RegisterAccount",
-        user: "john",
-        result: "succeed"
+        action: 'RegisterAccount',
+        user: 'john',
+        result: 'succeed'
     });
 
 })();

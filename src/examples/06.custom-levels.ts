@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,19 +16,19 @@
 
 import {
     createFactory
-} from "../lib";
+} from '../lib';
 
 /**
  * Define the customized levels of logs.
  */
-type MyLevels = "normal" | "secure" | "failure";
+type MyLevels = 'normal' | 'secure' | 'failure';
 
 const factory1 = createFactory<MyLevels>([
-    "normal", "secure", "failure"
+    'normal', 'secure', 'failure'
 ]);
 
-const logs = factory1.createTextLogger("Test");
+const logs = factory1.createTextLogger('Test');
 
 logs.unmute();
 
-logs.normal("This is a normal log.");
+logs.normal('This is a normal log.');

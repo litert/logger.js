@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,27 +14,27 @@
  *  limitations under the License.
  */
 
-import Loggers, { createColorfulTTYDriver } from "../lib";
+import Loggers, { createColorfulTTYDriver } from '../lib';
 
 (function builtInColorfulDriver(): void {
 
     const theColorDriver = createColorfulTTYDriver();
 
-    theColorDriver.foreColor("green", "info");
-    theColorDriver.foreColor("red", "error");
-    theColorDriver.foreColor("yellow", "warning");
-    theColorDriver.foreColor("grey", "notice");
-    theColorDriver.foreColor("cyan", "debug");
+    theColorDriver.foreColor('green', 'info');
+    theColorDriver.foreColor('red', 'error');
+    theColorDriver.foreColor('yellow', 'warning');
+    theColorDriver.foreColor('grey', 'notice');
+    theColorDriver.foreColor('cyan', 'debug');
 
-    Loggers.registerDriver("colorful", theColorDriver);
+    Loggers.registerDriver('colorful', theColorDriver);
 
     /**
      * First, create a log controller, giving a subject.
      */
-    let logs = Loggers.createTextLogger(
-        "Colorful",
+    const logs = Loggers.createTextLogger(
+        'Colorful',
         undefined,
-        "colorful"
+        'colorful'
     );
 
     /**
@@ -47,21 +47,21 @@ import Loggers, { createColorfulTTYDriver } from "../lib";
     /**
      * Output a log of INFO level.
      */
-    logs.info("This is INFO log.");
+    logs.info('This is INFO log.');
 
-    logs.error("This is ERROR log.");
+    logs.error('This is ERROR log.');
 
     /**
      * Now the DEBUG logs couldn't be output (No errors, but ignored.)
      */
-    logs.debug("This is DEBUG log.");
+    logs.debug('This is DEBUG log.');
 
     logs.enableTrace();
 
-    logs.warning("This is WARNING log.");
+    logs.warning('This is WARNING log.');
 
     logs.enableTrace(10);
 
-    logs.notice("This is NOTICE log.");
+    logs.notice('This is NOTICE log.');
 
 })();

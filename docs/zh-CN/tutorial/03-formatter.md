@@ -95,7 +95,7 @@ log.info("world");
 Sun Aug 12 2018 17:04:26 GMT+0800 (中国标准时间) - Custom-Formatter - info - Hello
 Sun Aug 12 2018 17:04:26 GMT+0800 (中国标准时间) - Custom-Formatter - info - world
 Trace Stack:
-  formatterDemo (/home/fenying/logger/samples/demo.js:99:4)
+  formatterDemo (/home/fenying/logger/examples/demo.js:99:4)
 ```
 
 ## 预注册格式化函数

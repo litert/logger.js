@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import { IFormatter } from "./Common";
+import { IFormatter } from './Common';
 
 /**
  * The default formatter for text log.
@@ -30,7 +30,7 @@ export const DEFAULT_TEXT_FORMATTER: IFormatter<string, string> = function(
     if (traces) {
 
         return `[${date.toISOString()}][${level}] ${subject}: ${log}
-  at ${traces.join("\n  at ")}`;
+  at ${traces.join('\n  at ')}`;
     }
 
     return `[${date.toISOString()}][${level}] ${subject}: ${log}`;

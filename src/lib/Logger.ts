@@ -1,5 +1,5 @@
 /**
- *  Copyright 2018 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2020 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import { ILevelOptions } from "./Internal";
+import { ILevelOptions } from './Internal';
 import {
 
     IFormatter,
@@ -22,11 +22,10 @@ import {
     IBaseLogger,
     DEFAULT_LEVELS
 
-} from "./Common";
+} from './Common';
 
-function _emptyLogMethod(this: Logger, x: string) {
-
-    return this;
+function _emptyLogMethod(): void {
+    return;
 }
 
 /**
@@ -40,9 +39,9 @@ function createLogMethod(
     formatter: IFormatter<any, string>
 ): any {
 
-    let cs: string[] = [];
+    const cs: string[] = [];
 
-    cs.push(`return function(log, now = new Date()) {`);
+    cs.push('return function(log, now = new Date()) {');
 
     if (traceDepth) {
 
@@ -54,38 +53,38 @@ function createLogMethod(
         cs.push(`).slice(1, ${traceDepth + 1});`);
     }
 
-    subject = subject.replace(/"/g, "\\\"");
-    level = level.replace(/"/g, "\\\"");
+    subject = subject.replace(/"/g, '\\"');
+    level = level.replace(/"/g, '\\"');
 
-    cs.push(`driver.write(`);
-    cs.push(`    formatter(`);
-    cs.push(`        log,`);
+    cs.push('driver.write(');
+    cs.push('    formatter(');
+    cs.push('        log,');
     cs.push(`        "${subject}",`);
     cs.push(`        "${level}",`);
 
     if (traceDepth) {
 
-        cs.push(`        now,`);
-        cs.push(`        traces`);
+        cs.push('        now,');
+        cs.push('        traces');
     }
     else {
 
-        cs.push(`        now`);
+        cs.push('        now');
     }
 
-    cs.push(`    ),`);
+    cs.push('    ),');
     cs.push(`    "${subject}",`);
     cs.push(`    "${level}",`);
-    cs.push(`    now`);
-    cs.push(`);`);
-    cs.push(`return this;`);
+    cs.push('    now');
+    cs.push(');');
+    cs.push('return this;');
 
-    cs.push(`};`);
+    cs.push('};');
 
     return (new Function(
-        "formatter",
-        "driver",
-        cs.join("\n")
+        'formatter',
+        'driver',
+        cs.join('\n')
     ))(
         formatter,
         driver
@@ -136,9 +135,9 @@ implements IBaseLogger<string> {
 
         this._subject = subject;
 
-        this._formatter = <any> wraper;
+        this._formatter = wraper;
 
-        for (let lv of levels) {
+        for (const lv of levels) {
 
             this._options[lv] = {
                 enabled: settings[lv].enabled,
@@ -170,12 +169,12 @@ implements IBaseLogger<string> {
 
             levels = this._levels.slice();
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let level of levels) {
+        for (const level of levels) {
 
             this._options[level].trace = depth;
             this._updateMethod(level);
@@ -190,15 +189,15 @@ implements IBaseLogger<string> {
 
             levels = this._levels;
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let level of levels) {
+        for (const level of levels) {
 
             this._options[level].enabled = true;
-            this._updateMethod(<any> level);
+            this._updateMethod(level);
         }
 
         return this;
@@ -210,15 +209,15 @@ implements IBaseLogger<string> {
 
             levels = this._levels;
         }
-        else if (typeof levels === "string") {
+        else if (typeof levels === 'string') {
 
             levels = [ levels ];
         }
 
-        for (let level of levels) {
+        for (const level of levels) {
 
             this._options[level].enabled = false;
-            this._updateMethod(<any> level);
+            this._updateMethod(level);
         }
 
         return this;

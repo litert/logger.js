@@ -21,7 +21,7 @@ npm i @litert/logger@dev -S
 ```ts
 import Loggers from "@litert/logger";
 
-let log = Loggers.createTextLogger("Sample");
+let log = Loggers.createTextLogger("Example");
 
 log.unmute();
 
