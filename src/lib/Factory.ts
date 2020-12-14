@@ -258,9 +258,9 @@ implements IFactory<string> {
 
         const formatterFn = typeof formatter === 'string' ? this._formatters.text[formatter] : formatter;
 
-        if (!formatterFn) {
+        if (typeof formatterFn !== 'function') {
 
-            throw new ReferenceError(`Unknown formatter ${formatter}`);
+            throw new TypeError(`Unknown formatter ${formatter}`);
         }
 
         return this.createDataLogger<string>(
@@ -283,9 +283,9 @@ implements IFactory<string> {
 
         const formatterFn = typeof formatter === 'string' ? this._formatters.data[formatter] : formatter;
 
-        if (!formatterFn) {
+        if (typeof formatterFn !== 'function') {
 
-            throw new ReferenceError(`Unknown formatter ${formatter}`);
+            throw new TypeError(`Unknown formatter ${formatter}`);
         }
 
         return this._loggers[subject] = new Logger(

@@ -1,6 +1,10 @@
 # Changes Logs
 
-## v1.1.2
+## vNEXT
+
+- fix(factory): only fn and name of formatter is acceptable by `createLogger` method.
+
+## v1.1.3
 
 - Switched to ESLint.
 - Added TypeScript declaration map.
