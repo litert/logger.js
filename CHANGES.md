@@ -1,8 +1,12 @@
 # Changes Logs
 
-## vNEXT
+## v1.1.4
 
 - fix(factory): only fn and name of formatter is acceptable by `createLogger` method.
+- refactor: renamed `LoggerMethod` to `ILoggerMethod`, and `@deprecated` the `LoggerMethod`.
+- refactor: renamed `DefaultLevels` to `IDefaultLevels`, and `@deprecated` the `DefaultLevels`.
+- refactor: renamed `ForeColorSet` to `IForeColorSet`, and `@deprecated` the `ForeColorSet`.
+- refactor: renamed `BgColorSet` to `IBgColorSet`, and `@deprecated` the `BgColorSet`.
 
 ## v1.1.3
 

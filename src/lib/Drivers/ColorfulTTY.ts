@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,14 +14,22 @@
  *  limitations under the License.
  */
 
-// tslint:disable:no-console
-
 import { IDriver } from '../Common';
 
-export type ForeColorSet = 'blue' | 'cyan' | 'green' | 'magenta' | 'grey' |
+export type IForeColorSet = 'blue' | 'cyan' | 'green' | 'magenta' | 'grey' |
 'red' | 'yellow' | 'white' | 'black' | 'default';
 
-export type BgColorSet = ForeColorSet;
+export type IBgColorSet = IForeColorSet;
+
+/**
+ * @deprecated Use `IForeColorSet` instead.
+ */
+export type ForeColorSet = IForeColorSet;
+
+/**
+ * @deprecated Use `IBgColorSet` instead.
+ */
+export type BgColorSet = IBgColorSet;
 
 const BG_COLOR_ENDING = '\x1B[49m';
 const FORE_COLOR_ENDING = '\x1B[39m';
@@ -33,12 +41,12 @@ type Writer = (
     date: Date
 ) => void;
 
-function NON_COLORFUL_WRITER(text: string): void {
+function nonColorfulWriter(text: string): void {
 
     console.log(text);
 }
 
-const FORE_COLORS: Record<ForeColorSet, string> = {
+const FORE_COLORS: Record<IForeColorSet, string> = {
     'default': '',
     'blue': '\u001b[34m',
     'cyan': '\u001b[36m',
@@ -51,7 +59,7 @@ const FORE_COLORS: Record<ForeColorSet, string> = {
     'black': '\u001b[30m'
 };
 
-const BG_COLORS: Record<BgColorSet, string> = {
+const BG_COLORS: Record<IBgColorSet, string> = {
     'default': '',
     'white': '\u001b[47m',
     'grey': '\u001b[49;5;8m',
@@ -74,7 +82,7 @@ export interface IColorfulTTYDriver
      * @param level Specify the level to be colorified.
      *              If no level specified, then the default color will be set.
      */
-    foreColor(color: ForeColorSet, level?: string): this;
+    foreColor(color: IForeColorSet, level?: string): this;
 
     /**
      * Set the background-color for the logs of a level.
@@ -83,7 +91,7 @@ export interface IColorfulTTYDriver
      * @param level Specify the level to be colorified.
      *              If no level specified, then the default color will be set.
      */
-    bgColor(color: BgColorSet, level?: string): this;
+    bgColor(color: IBgColorSet, level?: string): this;
 }
 
 interface IStyle {
@@ -128,7 +136,7 @@ implements IColorfulTTYDriver {
         this.write = this._buildWriter() as any;
     }
 
-    public bgColor(color: BgColorSet, level?: string): this {
+    public bgColor(color: IBgColorSet, level?: string): this {
 
         this._bgColors[level || DEFAULT_LEVEL] = color === 'default' ?
             '' : BG_COLORS[color];
@@ -138,7 +146,7 @@ implements IColorfulTTYDriver {
         return this;
     }
 
-    public foreColor(color: ForeColorSet, level?: string): this {
+    public foreColor(color: IForeColorSet, level?: string): this {
 
         this._foreColors[level || DEFAULT_LEVEL] = color === 'default' ?
             '' : FORE_COLORS[color];
@@ -185,19 +193,22 @@ implements IColorfulTTYDriver {
 
     public static isTerminal(): boolean {
 
-        // @ts-ignore
         return this.isNodeJS() && (
-            // @ts-ignore
             process.stdout.isTTY ||
-            // @ts-ignore
             process.stdout.constructor.name === 'Socket' // Debugging
         );
     }
 
     public static isNodeJS(): boolean {
 
-        // @ts-ignore
-        return typeof process === 'object' && typeof process.stdout === 'object';
+        try {
+
+            return typeof process.stdout === 'object';
+        }
+        catch {
+
+            return false;
+        }
     }
 
     private _buildWriter(): Writer {
@@ -207,7 +218,7 @@ implements IColorfulTTYDriver {
             return this._buildWriterForTerminal();
         }
 
-        return NON_COLORFUL_WRITER;
+        return nonColorfulWriter;
     }
 
     private _buildWriterForTerminal(): Writer {

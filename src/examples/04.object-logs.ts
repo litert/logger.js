@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,7 +16,7 @@
 
 import Loggers from '../lib';
 
-interface LogInfo {
+interface ILogInfo {
 
     'action': string;
 
@@ -30,7 +30,7 @@ interface LogInfo {
     /**
      * First, create a log controller, giving a subject and a formater.
      */
-    const logs = Loggers.createDataLogger<LogInfo>(
+    const logs = Loggers.createDataLogger<ILogInfo>(
         'Object-Formatter',
         function(log, subj, lv, dt, traces): string {
 

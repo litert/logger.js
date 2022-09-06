@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  *  limitations under the License.
  */
 
-// tslint:disable:no-console
-
 import { IDriver } from '../Common';
 
 class ConsoleDriver
@@ -23,7 +21,7 @@ implements IDriver {
 
     public write(text: string): void {
 
-        return console.log(text);
+        console.log(text);
     }
 
     public flush(): void {

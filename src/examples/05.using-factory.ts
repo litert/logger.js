@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -19,7 +19,7 @@ import {
     DEFAULT_LEVELS
 } from '../lib';
 
-interface LogInfo {
+interface ILogInfo {
 
     'action': string;
 
@@ -36,7 +36,7 @@ interface LogInfo {
     /**
      * First, create a log controller, giving a subject.
      */
-    const logs1 = factory1.createDataLogger<LogInfo>(
+    const logs1 = factory1.createDataLogger<ILogInfo>(
         'Using-Factory-1',
         function(log, subj, lv, dt, traces): string {
 
@@ -52,7 +52,7 @@ interface LogInfo {
         }
     );
 
-    const logs2 = factory2.createDataLogger<LogInfo>(
+    const logs2 = factory2.createDataLogger<ILogInfo>(
         'Using-Factory-2',
         function(log, subj, lv, dt, traces): string {
 

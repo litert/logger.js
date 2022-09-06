@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ import {
 
 } from './Common';
 
-function _emptyLogMethod(): void {
+function emptyLogMethod(): void {
     return;
 }
 
@@ -225,14 +225,14 @@ implements IBaseLogger<string> {
 
     protected _updateMethod(lv: string): void {
 
-        // @ts-ignore
+        // @ts-expect-error
         this[lv] = this._options[lv].enabled ? createLogMethod(
             this._subject,
             lv,
             this._options[lv].trace,
             this._driver,
             this._formatter
-        ) : _emptyLogMethod;
+        ) : emptyLogMethod;
     }
 }
 

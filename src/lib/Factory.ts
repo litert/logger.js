@@ -1,5 +1,5 @@
 /**
- *  Copyright 2020 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2022 Angus.Fenying <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -16,9 +16,7 @@
 
 import Logger from './Logger';
 
-import {
-    ILevelOptions
-} from './Internal';
+import { ILevelOptions } from './Internal';
 
 import {
     DEFAULT_JSON_FORMATTER,
@@ -30,11 +28,11 @@ import { createConsoleDriver } from './Drivers/Console';
 import {
     IFactory,
     IFormatter,
+    ILogger,
+    IDefaultLevels,
+    IDriver,
     DEFAULT_SUBJECT,
     DEFAULT_DRIVER,
-    ILogger,
-    DefaultLevels,
-    IDriver,
     DEFAULT_LEVELS
 } from './Common';
 
@@ -301,9 +299,7 @@ implements IFactory<string> {
 /**
  * Create a new factory object.
  */
-export function createFactory<
-    L extends string = DefaultLevels
->(levels: L[]): IFactory<L> {
+export function createFactory<TLv extends string = IDefaultLevels>(levels: TLv[]): IFactory<TLv> {
 
     return new LoggerFactory(levels) as any;
 }
@@ -316,7 +312,7 @@ const factory = createFactory(DEFAULT_LEVELS);
 /**
  * Get the default factory object.
  */
-export function getDefaultFactory(): IFactory<DefaultLevels> {
+export function getDefaultFactory(): IFactory<IDefaultLevels> {
 
     return factory as any;
 }
