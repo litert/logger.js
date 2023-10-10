@@ -26,7 +26,7 @@
     "forceConsistentCasingInFileNames": true,
     "noUnusedLocals": true,
     "noImplicitReturns": true,
-    "strictNullChecks": false,
+    "strictNullChecks": true,
     "newLine": "LF",
     /* Strict Type-Checking Options */        
     "strict": true,                            /* Enable all strict type-checking options. */

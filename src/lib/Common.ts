@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@ export const DEFAULT_SUBJECT = 'default';
 /**
  * The names of default levels.
  */
-export const DEFAULT_LEVELS: IDefaultLevels[] = [
+export const DEFAULT_LEVELS: readonly IDefaultLevels[] = [
     'error',
     'notice',
     'warning',
@@ -36,7 +36,7 @@ export const DEFAULT_LEVELS: IDefaultLevels[] = [
 ];
 
 /**
- * The function serializing or formating original input of logs into text form.
+ * The function serializing or formatting original input of logs into text form.
  *
  * @param log       The original input of log.
  * @param subject   The subject of log.
@@ -49,7 +49,7 @@ export type IFormatter<T, TLevel extends string> = (
     subject: string,
     level: TLevel,
     date: Date,
-    traces?: string[]
+    traces?: readonly string[]
 ) => string;
 
 export interface IDriver {
@@ -84,7 +84,7 @@ export interface IDriver {
     close(): void | Promise<void>;
 }
 
-export interface IBaseLogger<TLevel extends string> {
+export interface IBaseLogger<TLv extends string> {
 
     /**
      * Get the subject of current logger.
@@ -94,7 +94,7 @@ export interface IBaseLogger<TLevel extends string> {
     /**
      * Get the levels list of this logger supports.
      */
-    getLevels(): TLevel[];
+    getLevels(): TLv[];
 
     /**
      * Enable or disable trace info of all levels or determined level of
@@ -105,7 +105,7 @@ export interface IBaseLogger<TLevel extends string> {
      * @param level Determine a level or a list of level to be disabled tracing.
      *              By default it will be all levels.
      */
-    enableTrace(depth?: number, level?: TLevel | TLevel[]): this;
+    enableTrace(depth?: number, level?: TLv | readonly TLv[]): this;
 
     /**
      * Unmute all levels or determined level of current logger.
@@ -113,7 +113,7 @@ export interface IBaseLogger<TLevel extends string> {
      * @param level Determine a level or a list of level to be unmuted.
      *              By default it will be all levels.
      */
-    unmute(level?: TLevel | TLevel[]): this;
+    unmute(level?: TLv | readonly TLv[]): this;
 
     /**
      * Mute all levels or determined level of current logger.
@@ -121,7 +121,14 @@ export interface IBaseLogger<TLevel extends string> {
      * @param level Determine a level or a list of level to be muted.
      *              By default it will be all levels.
      */
-    mute(level?: TLevel | TLevel[]): this;
+    mute(level?: TLv | readonly TLv[]): this;
+
+    /**
+     * Check a determined level or all levels of current logger is muted.
+     *
+     * @param level Determine a level to be checked. If not provided, it will check all levels.
+     */
+    isMuted(level?: TLv): boolean;
 
     /**
      * Flush the logs in driver's buffer.
@@ -164,7 +171,7 @@ export type DefaultLevels = IDefaultLevels;
 /**
  * The logger factory interface.
  */
-export interface IFactory<TLevel extends string> {
+export interface IFactory<TLv extends string> {
 
     /**
      * Mute all levels of all loggers, or determined level of all loggers.
@@ -172,7 +179,7 @@ export interface IFactory<TLevel extends string> {
      * @param level Determine a level or a list of level to be muted.
      *              By default it will be all levels.
      */
-    mute(level?: TLevel | TLevel[]): this;
+    mute(level?: TLv | readonly TLv[]): this;
 
     /**
      * Enable all levels of all loggers, or determined level of all loggers.
@@ -180,7 +187,7 @@ export interface IFactory<TLevel extends string> {
      * @param level Determine a level or a list of level to be unmuted.
      *              By default it will be all levels.
      */
-    unmute(level?: TLevel | TLevel[]): this;
+    unmute(level?: TLv | readonly TLv[]): this;
 
     /**
      * Disable or enable trace info for all levels of all loggers, or for
@@ -191,7 +198,7 @@ export interface IFactory<TLevel extends string> {
      * @param level Determine a level or a list of level to be disabled tracing.
      *              By default it will be all levels.
      */
-    enableTrace(depth?: number, level?: TLevel | TLevel[]): this;
+    enableTrace(depth?: number, level?: TLv | readonly TLv[]): this;
 
     /**
      * Added a new driver.
@@ -219,7 +226,7 @@ export interface IFactory<TLevel extends string> {
      * @param name          The unique name of formatter
      * @param formatter     The formatter.
      */
-    registerDataFormatter<T>(name: string, formatter: IFormatter<T, TLevel>): boolean;
+    registerDataFormatter<T>(name: string, formatter: IFormatter<T, TLv>): boolean;
 
     /**
      * Added a new formatter for text logger.
@@ -227,14 +234,14 @@ export interface IFactory<TLevel extends string> {
      * @param name          The unique name of formatter
      * @param formatter     The formatter.
      */
-    registerTextFormatter(name: string, formatter: IFormatter<string, TLevel>): boolean;
+    registerTextFormatter(name: string, formatter: IFormatter<string, TLv>): boolean;
 
     /**
      * Find and return an existing formatter by its unique name.
      *
      * @param name  The unique name of data formatter
      */
-    getDataFormatter<T = any>(name: string): IFormatter<T, string>;
+    getDataFormatter<T = unknown>(name: string): IFormatter<T, string>;
 
     /**
      * Find and return an existing formatter by its unique name.
@@ -261,7 +268,7 @@ export interface IFactory<TLevel extends string> {
     /**
      * Get the levels list of this factory supports.
      */
-    getLevels(): TLevel[];
+    getLevels(): TLv[];
 
     /**
      * Create a simple text logger.
@@ -273,9 +280,9 @@ export interface IFactory<TLevel extends string> {
      */
     createTextLogger(
         subject?: string,
-        formatter?: IFormatter<string, TLevel> | string,
+        formatter?: IFormatter<string, TLv> | string,
         driver?: string
-    ): ILogger<string, TLevel>;
+    ): ILogger<string, TLv>;
 
     /**
      * Create a simple data logger.
@@ -285,9 +292,9 @@ export interface IFactory<TLevel extends string> {
      *                  (default: DEFAULT_JSON_FORMATTER)
      * @param driver  The driver to write logs. (default: console)
      */
-    createDataLogger<T = any>(
+    createDataLogger<T = unknown>(
         subject?: string,
-        formatter?: IFormatter<T, TLevel> | string,
+        formatter?: IFormatter<T, TLv> | string,
         driver?: string
-    ): ILogger<T, TLevel>;
+    ): ILogger<T, TLv>;
 }

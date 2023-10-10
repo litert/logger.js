@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v1.2.0
+
+- feat(logger): added `Logger.isMuted` method.
+
 ## v1.1.4
 
 - fix(factory): only fn and name of formatter is acceptable by `createLogger` method.

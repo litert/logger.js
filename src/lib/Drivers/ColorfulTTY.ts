@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -34,7 +34,7 @@ export type BgColorSet = IBgColorSet;
 const BG_COLOR_ENDING = '\x1B[49m';
 const FORE_COLOR_ENDING = '\x1B[39m';
 
-type Writer = (
+type IWriter = (
     text: string,
     subject: string,
     level: string,
@@ -101,21 +101,15 @@ interface IStyle {
     end: string;
 }
 
-/**
- * This ugly line is due to the breaking changes after TypeScript 2.9.x.
- *
- * @see https://github.com/Microsoft/TypeScript/issues/24587
- */
-const DEFAULT_LEVEL: string = Symbol('__default__') as any;
+const DEFAULT_LEVEL = Symbol('__default__');
 
-class ColorfulTTYDriver
-implements IColorfulTTYDriver {
+class ColorfulTTYDriver implements IColorfulTTYDriver {
 
-    private _foreColors: Record<string, string>;
+    private _foreColors: Record<string | symbol, string>;
 
-    private _bgColors: Record<string, string>;
+    private _bgColors: Record<string | symbol, string>;
 
-    private _levels: Record<string, IStyle>;
+    private _levels: Record<string | symbol, IStyle>;
 
     public constructor() {
 
@@ -138,25 +132,25 @@ implements IColorfulTTYDriver {
 
     public bgColor(color: IBgColorSet, level?: string): this {
 
-        this._bgColors[level || DEFAULT_LEVEL] = color === 'default' ?
+        this._bgColors[level ?? DEFAULT_LEVEL] = color === 'default' ?
             '' : BG_COLORS[color];
 
-        this._rebuild(level || DEFAULT_LEVEL);
+        this._rebuild(level ?? DEFAULT_LEVEL);
 
         return this;
     }
 
     public foreColor(color: IForeColorSet, level?: string): this {
 
-        this._foreColors[level || DEFAULT_LEVEL] = color === 'default' ?
+        this._foreColors[level ?? DEFAULT_LEVEL] = color === 'default' ?
             '' : FORE_COLORS[color];
 
-        this._rebuild(level || DEFAULT_LEVEL);
+        this._rebuild(level ?? DEFAULT_LEVEL);
 
         return this;
     }
 
-    private _rebuild(level: string/* | symbol*/): void {
+    private _rebuild(level: string | symbol): void {
 
         let start: string = '';
         let end: string = '';
@@ -211,7 +205,7 @@ implements IColorfulTTYDriver {
         }
     }
 
-    private _buildWriter(): Writer {
+    private _buildWriter(): IWriter {
 
         if (ColorfulTTYDriver.isTerminal()) {
 
@@ -221,7 +215,7 @@ implements IColorfulTTYDriver {
         return nonColorfulWriter;
     }
 
-    private _buildWriterForTerminal(): Writer {
+    private _buildWriterForTerminal(): IWriter {
 
         const cs: string[] = [];
 

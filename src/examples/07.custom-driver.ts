@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -15,12 +15,11 @@
  */
 
 import Loggers, { IDriver } from '../lib';
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 
-class FileLogDriver
-implements IDriver {
+class FileLogDriver implements IDriver {
 
-    private _ws: fs.WriteStream;
+    private _ws?: fs.WriteStream;
 
     public constructor(file: string) {
 
@@ -43,7 +42,7 @@ implements IDriver {
 
     public close(): void | Promise<void> {
 
-        this._ws.end();
+        this._ws?.end();
         delete this._ws;
     }
 }

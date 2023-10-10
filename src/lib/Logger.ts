@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,53 +14,73 @@
  *  limitations under the License.
  */
 
-import { ILevelOptions } from './Internal';
 import {
 
     IFormatter,
     IDriver,
     IBaseLogger,
-    DEFAULT_LEVELS
+    DEFAULT_LEVELS,
+    ILoggerMethod,
 
 } from './Common';
 
-function emptyLogMethod(): void {
-    return;
+/**
+ * Internal settings of each level
+ */
+export interface ILevelOptions {
+
+    /**
+     * If the level is enabled for output.
+     */
+    'enabled': boolean;
+
+    /**
+     * How many lines of stack trace could be logged.
+     */
+    'trace': number;
+}
+
+function createMutedLogMethod<T, TLv extends string>(logger: Logger): ILoggerMethod<T, TLv> {
+
+    return function(): unknown {
+
+        return logger;
+    } as ILoggerMethod<T, TLv>;
 }
 
 /**
  * Create a logging method, works like a JIT compiler.
  */
-function createLogMethod(
+function createLogMethod<T, TLv extends string>(
     subject: string,
     level: string,
     traceDepth: number,
     driver: IDriver,
-    formatter: IFormatter<any, string>
-): any {
+    formatter: IFormatter<T, string>
+): ILoggerMethod<T, TLv> {
 
     const cs: string[] = [];
 
     cs.push('return function(log, now = new Date()) {');
 
+    subject = JSON.stringify(subject);
+    level = JSON.stringify(level);
+
     if (traceDepth) {
 
         cs.push('let tmpObj = {};');
-        cs.push(`Error.captureStackTrace(tmpObj, this.${level});`);
+        cs.push(`Error.captureStackTrace(tmpObj, this[${level}]);`);
 
         cs.push('let traces = tmpObj.stack.split(');
         cs.push('   /\\n\\s+at\\s+/');
         cs.push(`).slice(1, ${traceDepth + 1});`);
     }
 
-    subject = subject.replace(/"/g, '\\"');
-    level = level.replace(/"/g, '\\"');
-
     cs.push('driver.write(');
     cs.push('    formatter(');
     cs.push('        log,');
-    cs.push(`        "${subject}",`);
-    cs.push(`        "${level}",`);
+    cs.push(`        ${subject},`);
+    cs.push(`        ${level},`);
 
     if (traceDepth) {
 
@@ -73,13 +93,15 @@ function createLogMethod(
     }
 
     cs.push('    ),');
-    cs.push(`    "${subject}",`);
-    cs.push(`    "${level}",`);
+    cs.push(`    ${subject},`);
+    cs.push(`    ${level},`);
     cs.push('    now');
     cs.push(');');
     cs.push('return this;');
 
     cs.push('};');
+
+    console.log(cs.join('\n'));
 
     return (new Function(
         'formatter',
@@ -91,40 +113,39 @@ function createLogMethod(
     );
 }
 
-class Logger
-implements IBaseLogger<string> {
+export class Logger implements IBaseLogger<string> {
 
     /**
-     * The options
+     * The options of all levels.
      */
-    protected _options: Record<string, ILevelOptions>;
+    protected readonly _options: Record<string, ILevelOptions>;
 
     /**
      * The subject of current logger.
      */
-    protected _subject: string;
+    protected readonly _subject: string;
 
     /**
      * The log formatter of current logger.
      */
-    protected _formatter!: IFormatter<any, string>;
+    protected readonly _formatter!: IFormatter<unknown, string>;
 
     /**
      * The log output driver of current logger.
      */
-    protected _driver: IDriver;
+    protected readonly _driver: IDriver;
 
     /**
      * The log levels of current logger.
      */
-    protected _levels: string[];
+    protected readonly _levels: readonly string[];
 
     public constructor(
         subject: string,
         driver: IDriver,
         settings: Record<string, ILevelOptions>,
-        wraper?: IFormatter<any, string>,
-        levels: string[] = DEFAULT_LEVELS
+        formatFn: IFormatter<unknown, string>,
+        levels: readonly string[] = DEFAULT_LEVELS
     ) {
 
         this._options = {};
@@ -135,7 +156,7 @@ implements IBaseLogger<string> {
 
         this._subject = subject;
 
-        this._formatter = wraper;
+        this._formatter = formatFn;
 
         for (const lv of levels) {
 
@@ -183,9 +204,9 @@ implements IBaseLogger<string> {
         return this;
     }
 
-    public unmute(levels?: string | string[]): this {
+    public unmute(levels?: string | readonly string[]): this {
 
-        if (!levels || !levels.length) {
+        if (!levels?.length) {
 
             levels = this._levels;
         }
@@ -203,9 +224,19 @@ implements IBaseLogger<string> {
         return this;
     }
 
-    public mute(levels?: string | string[]): this {
+    public isMuted(level?: string): boolean {
 
-        if (!levels || !levels.length) {
+        if (undefined === level) {
+
+            return this._levels.every((lv) => !this._options[lv].enabled);
+        }
+
+        return !this._options[level].enabled;
+    }
+
+    public mute(levels?: string | readonly string[]): this {
+
+        if (!levels?.length) {
 
             levels = this._levels;
         }
@@ -232,8 +263,6 @@ implements IBaseLogger<string> {
             this._options[lv].trace,
             this._driver,
             this._formatter
-        ) : emptyLogMethod;
+        ) : createMutedLogMethod(this);
     }
 }
-
-export default Logger;

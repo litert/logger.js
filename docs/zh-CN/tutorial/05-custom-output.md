@@ -101,8 +101,7 @@ interface IDriver {
 ```ts
 import * as fs from "fs";
 
-class FileLogDriver
-implements IDriver {
+class FileLogDriver implements IDriver {
 
     private _ws: fs.WriteStream;
 

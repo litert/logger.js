@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -24,7 +24,7 @@ export const DEFAULT_TEXT_FORMATTER: IFormatter<string, string> = function(
     subject: string,
     level: string,
     date: Date,
-    traces?: string[]
+    traces?: readonly string[]
 ): string {
 
     if (traces) {
@@ -39,12 +39,12 @@ export const DEFAULT_TEXT_FORMATTER: IFormatter<string, string> = function(
 /**
  * The default formatter for customized log.
  */
-export const DEFAULT_JSON_FORMATTER: IFormatter<any, string> = function(
-    log: any,
+export const DEFAULT_JSON_FORMATTER: IFormatter<unknown, string> = function(
+    log: unknown,
     subject: string,
     level: string,
     date: Date,
-    traces?: string[]
+    traces?: readonly string[]
 ): string {
 
     return JSON.stringify({

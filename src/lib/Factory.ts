@@ -1,5 +1,5 @@
 /**
- *  Copyright 2022 Angus.Fenying <fenying@litert.org>
+ *  Copyright 2023 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,9 +14,7 @@
  *  limitations under the License.
  */
 
-import Logger from './Logger';
-
-import { ILevelOptions } from './Internal';
+import { Logger, ILevelOptions } from './Logger';
 
 import {
     DEFAULT_JSON_FORMATTER,
@@ -36,20 +34,22 @@ import {
     DEFAULT_LEVELS
 } from './Common';
 
-class LoggerFactory
-implements IFactory<string> {
+class LoggerFactory implements IFactory<string> {
 
     protected _drivers: Record<string, IDriver>;
 
-    protected _loggers: Record<string, ILogger<any, string>>;
+    protected _loggers: Record<string, ILogger<unknown, string>>;
 
     protected _globalConfig: Record<string, ILevelOptions>;
 
-    protected _formatters: Record<'text' | 'data', Record<string, IFormatter<any, string>>>;
+    protected _formatters: {
+        text: Record<string, IFormatter<string, string>>;
+        data: Record<string, IFormatter<unknown, string>>;
+    };
 
-    protected _levels: string[];
+    protected _levels: readonly string[];
 
-    public constructor(levels: string[] = DEFAULT_LEVELS) {
+    public constructor(levels: readonly string[] = DEFAULT_LEVELS) {
 
         this._loggers = {};
 
@@ -119,9 +119,9 @@ implements IFactory<string> {
         return [...this._levels];
     }
 
-    public mute(levels?: string | string[]): this {
+    public mute(levels?: string | readonly string[]): this {
 
-        if (!levels || !levels.length) {
+        if (!levels?.length) {
 
             levels = this._levels;
         }
@@ -143,9 +143,9 @@ implements IFactory<string> {
         return this;
     }
 
-    public unmute(levels?: string | string[]): this {
+    public unmute(levels?: string | readonly string[]): this {
 
-        if (!levels || !levels.length) {
+        if (!levels?.length) {
 
             levels = this._levels;
         }
@@ -208,7 +208,7 @@ implements IFactory<string> {
         return this._drivers[name] || null;
     }
 
-    public getDataFormatter<T = any>(name: string): IFormatter<T, string> {
+    public getDataFormatter<T = unknown>(name: string): IFormatter<T, string> {
 
         return this._formatters.data[name] || null;
     }
@@ -228,7 +228,7 @@ implements IFactory<string> {
             return false;
         }
 
-        this._formatters.data[name] = formatter;
+        this._formatters.data[name] = formatter as unknown as IFormatter<unknown, string>;
 
         return true;
     }
@@ -258,7 +258,7 @@ implements IFactory<string> {
 
         if (typeof formatterFn !== 'function') {
 
-            throw new TypeError(`Unknown formatter ${formatter}`);
+            throw new TypeError(`Unknown formatter ${formatter as string}`);
         }
 
         return this.createDataLogger<string>(
@@ -279,29 +279,31 @@ implements IFactory<string> {
             return this._loggers[subject];
         }
 
-        const formatterFn = typeof formatter === 'string' ? this._formatters.data[formatter] : formatter;
+        const formatFn = typeof formatter === 'string' ? this._formatters.data[formatter] : formatter;
 
-        if (typeof formatterFn !== 'function') {
+        if (typeof formatFn !== 'function') {
 
-            throw new TypeError(`Unknown formatter ${formatter}`);
+            throw new TypeError(`Unknown formatter ${formatter as string}`);
         }
 
-        return this._loggers[subject] = new Logger(
+        this._loggers[subject] = new Logger(
             subject,
             this.getDriver(driver),
             this._globalConfig,
-            formatterFn,
+            formatFn as IFormatter<unknown, string>,
             this._levels
-        ) as any;
+        ) as unknown as ILogger<unknown, string>;
+
+        return this._loggers[subject];
     }
 }
 
 /**
  * Create a new factory object.
  */
-export function createFactory<TLv extends string = IDefaultLevels>(levels: TLv[]): IFactory<TLv> {
+export function createFactory<TLv extends string = IDefaultLevels>(levels: readonly TLv[]): IFactory<TLv> {
 
-    return new LoggerFactory(levels) as any;
+    return new LoggerFactory(levels) as unknown as IFactory<TLv>;
 }
 
 /**
@@ -314,5 +316,5 @@ const factory = createFactory(DEFAULT_LEVELS);
  */
 export function getDefaultFactory(): IFactory<IDefaultLevels> {
 
-    return factory as any;
+    return factory as unknown as IFactory<IDefaultLevels>;
 }
