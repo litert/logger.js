@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v1.2.1
+
+- fix(logger): removed debug code.
+
 ## v1.2.0
 
 - feat(logger): added `Logger.isMuted` method.

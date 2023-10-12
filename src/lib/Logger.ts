@@ -101,8 +101,6 @@ function createLogMethod<T, TLv extends string>(
 
     cs.push('};');
 
-    console.log(cs.join('\n'));
-
     return (new Function(
         'formatter',
         'driver',
