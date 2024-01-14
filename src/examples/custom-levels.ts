@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,21 +14,13 @@
  *  limitations under the License.
  */
 
-import {
-    createFactory
-} from '../lib';
+import { createLoggerFactory } from '../lib';
 
-/**
- * Define the customized levels of logs.
- */
-type MyLevels = 'normal' | 'secure' | 'failure';
-
-const factory1 = createFactory<MyLevels>([
+const factory1 = createLoggerFactory([
     'normal', 'secure', 'failure'
 ]);
 
-const logs = factory1.createTextLogger('Test');
+const logs = factory1.createLogger('Test');
 
-logs.unmute();
-
-logs.normal('This is a normal log.');
+logs.normal('This is a NORMAL log.');
+logs.secure('This is a SECURE log.');

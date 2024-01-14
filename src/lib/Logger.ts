@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,39 +14,7 @@
  *  limitations under the License.
  */
 
-import {
-
-    IFormatter,
-    IDriver,
-    IBaseLogger,
-    DEFAULT_LEVELS,
-    ILoggerMethod,
-
-} from './Common';
-
-/**
- * Internal settings of each level
- */
-export interface ILevelOptions {
-
-    /**
-     * If the level is enabled for output.
-     */
-    'enabled': boolean;
-
-    /**
-     * How many lines of stack trace could be logged.
-     */
-    'trace': number;
-}
-
-function createMutedLogMethod<T, TLv extends string>(logger: Logger): ILoggerMethod<T, TLv> {
-
-    return function(): unknown {
-
-        return logger;
-    } as ILoggerMethod<T, TLv>;
-}
+import type * as dL from './Decl';
 
 /**
  * Create a logging method, works like a JIT compiler.
@@ -55,13 +23,13 @@ function createLogMethod<T, TLv extends string>(
     subject: string,
     level: string,
     traceDepth: number,
-    driver: IDriver,
-    formatter: IFormatter<T, string>
-): ILoggerMethod<T, TLv> {
+    driver: dL.IDriver,
+    formatter: dL.IFormatter<T, TLv>
+): dL.ILoggerMethod<T, TLv> {
 
     const cs: string[] = [];
 
-    cs.push('return function(log, now = new Date()) {');
+    cs.push('return function(log, dt = Date.now()) {');
 
     subject = JSON.stringify(subject);
     level = JSON.stringify(level);
@@ -84,18 +52,18 @@ function createLogMethod<T, TLv extends string>(
 
     if (traceDepth) {
 
-        cs.push('        now,');
+        cs.push('        dt,');
         cs.push('        traces');
     }
     else {
 
-        cs.push('        now');
+        cs.push('        dt');
     }
 
     cs.push('    ),');
     cs.push(`    ${subject},`);
     cs.push(`    ${level},`);
-    cs.push('    now');
+    cs.push('    dt');
     cs.push(');');
     cs.push('return this;');
 
@@ -111,156 +79,67 @@ function createLogMethod<T, TLv extends string>(
     );
 }
 
-export class Logger implements IBaseLogger<string> {
+export class Logger<TLog, TLv extends string> implements dL.IBaseLogger<TLog, TLv> {
 
-    /**
-     * The options of all levels.
-     */
-    protected readonly _options: Record<string, ILevelOptions>;
+    private readonly _mutedLogger = (): this => this;
 
-    /**
-     * The subject of current logger.
-     */
-    protected readonly _subject: string;
-
-    /**
-     * The log formatter of current logger.
-     */
-    protected readonly _formatter!: IFormatter<unknown, string>;
-
-    /**
-     * The log output driver of current logger.
-     */
-    protected readonly _driver: IDriver;
-
-    /**
-     * The log levels of current logger.
-     */
-    protected readonly _levels: readonly string[];
+    protected readonly _options: Record<string, dL.ILevelOptions<TLog, TLv>> = {};
 
     public constructor(
-        subject: string,
-        driver: IDriver,
-        settings: Record<string, ILevelOptions>,
-        formatFn: IFormatter<unknown, string>,
-        levels: readonly string[] = DEFAULT_LEVELS
+        public readonly subject: string,
+        defaultOptions: Record<string, dL.ILevelOptions<TLog, TLv>>,
+        public readonly levels: readonly TLv[]
     ) {
-
-        this._options = {};
-
-        this._levels = levels;
-
-        this._driver = driver;
-
-        this._subject = subject;
-
-        this._formatter = formatFn;
 
         for (const lv of levels) {
 
+            this.setLevelOptions({
+                ...defaultOptions[lv],
+                'levels': lv
+            });
+        }
+    }
+
+    public setLevelOptions(options: dL.ILevelUpdateOptions<TLog, TLv>): this {
+
+        const levels = options.levels?.length ?
+            Array.isArray(options.levels) ? options.levels : [options.levels] :
+            this.levels;
+
+        for (const lv of levels) {
+
+            if (!this.levels.includes(lv)) {
+
+                continue;
+            }
+
             this._options[lv] = {
-                enabled: settings[lv].enabled,
-                trace: settings[lv].trace
+                'traceDepth': Math.max(0, options.traceDepth ?? this._options[lv]?.traceDepth ?? 0),
+                'enabled': options.enabled ?? this._options[lv]?.enabled ?? true,
+                'driver': options.driver ?? this._options[lv].driver,
+                'formatter': options.formatter ?? this._options[lv].formatter
             };
 
             this._updateMethod(lv);
         }
-    }
-
-    public flush(): void | Promise<void> {
-
-        return this._driver.flush();
-    }
-
-    public getSubject(): string {
-
-        return this._subject;
-    }
-
-    public getLevels(): string[] {
-
-        return [...this._levels];
-    }
-
-    public enableTrace(depth: number = 1, levels?: string | string[]): this {
-
-        if (!levels || levels.length === 0) {
-
-            levels = this._levels.slice();
-        }
-        else if (typeof levels === 'string') {
-
-            levels = [ levels ];
-        }
-
-        for (const level of levels) {
-
-            this._options[level].trace = depth;
-            this._updateMethod(level);
-        }
 
         return this;
     }
 
-    public unmute(levels?: string | readonly string[]): this {
+    public getLevel(level: TLv): dL.ILevelOptions<TLog, TLv> {
 
-        if (!levels?.length) {
-
-            levels = this._levels;
-        }
-        else if (typeof levels === 'string') {
-
-            levels = [ levels ];
-        }
-
-        for (const level of levels) {
-
-            this._options[level].enabled = true;
-            this._updateMethod(level);
-        }
-
-        return this;
-    }
-
-    public isMuted(level?: string): boolean {
-
-        if (undefined === level) {
-
-            return this._levels.every((lv) => !this._options[lv].enabled);
-        }
-
-        return !this._options[level].enabled;
-    }
-
-    public mute(levels?: string | readonly string[]): this {
-
-        if (!levels?.length) {
-
-            levels = this._levels;
-        }
-        else if (typeof levels === 'string') {
-
-            levels = [ levels ];
-        }
-
-        for (const level of levels) {
-
-            this._options[level].enabled = false;
-            this._updateMethod(level);
-        }
-
-        return this;
+        return this._options[level];
     }
 
     protected _updateMethod(lv: string): void {
 
         // @ts-expect-error
-        this[lv] = this._options[lv].enabled ? createLogMethod(
-            this._subject,
+        this[lv] = this._options[lv].enabled ? createLogMethod<TLog, TLv>(
+            this.subject,
             lv,
-            this._options[lv].trace,
-            this._driver,
-            this._formatter
-        ) : createMutedLogMethod(this);
+            this._options[lv].traceDepth,
+            this._options[lv].driver,
+            this._options[lv].formatter
+        ) : this._mutedLogger;
     }
 }

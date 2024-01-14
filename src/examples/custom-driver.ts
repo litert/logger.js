@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import Loggers, { IDriver } from '../lib';
+import LoggerFactory, { IDriver } from '../lib';
 import * as fs from 'node:fs';
 
 class FileLogDriver implements IDriver {
@@ -49,18 +49,9 @@ class FileLogDriver implements IDriver {
 
 const fd = new FileLogDriver('a.log');
 
-Loggers.registerDriver(
-    'file-a',
-    fd
-);
+const logs = LoggerFactory.createLogger('Example');
 
-const logs = Loggers.createTextLogger(
-    'Example',
-    undefined,
-    'file-a'
-);
-
-logs.unmute();
+logs.setLevelOptions({ traceDepth: 2, driver: fd });
 
 logs.info('HI');
 

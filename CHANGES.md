@@ -1,5 +1,9 @@
 # Changes Logs
 
+## v2.0.0
+
+- build(project): refactor the project, simplified the API and usage.
+
 ## v1.2.1
 
 - fix(logger): removed debug code.

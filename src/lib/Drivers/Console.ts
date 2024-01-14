@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,12 +14,13 @@
  *  limitations under the License.
  */
 
-import { IDriver } from '../Common';
+import type { IDriver } from '../Decl';
 
 class ConsoleDriver implements IDriver {
 
     public write(text: string): void {
 
+        // eslint-disable-next-line no-console
         console.log(text);
     }
 

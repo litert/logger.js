@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -13,16 +13,14 @@
  *  See the License for the specific language governing permissions and
  *  limitations under the License.
  */
-import { getDefaultFactory } from './Factory';
+import { getDefaultLoggerFactory } from './Factory';
 
-export default getDefaultFactory();
+export default getDefaultLoggerFactory();
 
-export * from './Common';
+export * from './Decl';
 
 export * from './Factory';
 
 export * from './Formatters';
 
 export * from './Drivers/Console';
-
-export * from './Drivers/ColorfulTTY';

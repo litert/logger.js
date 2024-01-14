@@ -1,5 +1,5 @@
 /**
- *  Copyright 2023 Angus ZENG <fenying@litert.org>
+ *  Copyright 2024 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -14,7 +14,7 @@
  *  limitations under the License.
  */
 
-import { IFormatter } from './Common';
+import type { IFormatter } from './Decl';
 
 /**
  * The default formatter for text log.
@@ -23,17 +23,17 @@ export const DEFAULT_TEXT_FORMATTER: IFormatter<string, string> = function(
     log: string,
     subject: string,
     level: string,
-    date: Date,
+    time: number,
     traces?: readonly string[]
 ): string {
 
     if (traces) {
 
-        return `[${date.toISOString()}][${level}] ${subject}: ${log}
+        return `[${new Date(time).toISOString()}][${level}] ${subject}: ${log}
   at ${traces.join('\n  at ')}`;
     }
 
-    return `[${date.toISOString()}][${level}] ${subject}: ${log}`;
+    return `[${new Date(time).toISOString()}][${level}] ${subject}: ${log}`;
 };
 
 /**
@@ -43,15 +43,9 @@ export const DEFAULT_JSON_FORMATTER: IFormatter<unknown, string> = function(
     log: unknown,
     subject: string,
     level: string,
-    date: Date,
+    time: number,
     traces?: readonly string[]
 ): string {
 
-    return JSON.stringify({
-        subject,
-        level,
-        date: date.getTime(),
-        log,
-        traces
-    });
+    return JSON.stringify({ subject, level, time, log, traces });
 };
