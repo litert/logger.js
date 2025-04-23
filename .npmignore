@@ -10,5 +10,4 @@
 /.husky/
 *.log
 /commitlint.config.js
-/.eslintrc
-/.eslintignore
+/eslint.config.js
