@@ -1,5 +1,5 @@
 /**
- *  Copyright 2024 Angus ZENG <fenying@litert.org>
+ *  Copyright 2025 Angus ZENG <fenying@litert.org>
  *
  *  Licensed under the Apache License, Version 2.0 (the "License");
  *  you may not use this file except in compliance with the License.
@@ -133,6 +133,7 @@ export class Logger<TLog, TLv extends string> implements dL.IBaseLogger<TLog, TL
 
     protected _updateMethod(lv: string): void {
 
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
         this[lv] = this._options[lv].enabled ? createLogMethod<TLog, TLv>(
             this.subject,

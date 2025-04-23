@@ -1,6 +1,6 @@
 {
   "name": "@litert/logger",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "A logs-recorder for LiteRT framework.",
   "main": "lib/index.js",
   "scripts": {
@@ -33,12 +33,12 @@
   "types": "lib/index.d.ts",
   "typings": "lib/index.d.ts",
   "devDependencies": {
-    "@commitlint/cli": "^18.4.4",
-    "@commitlint/config-conventional": "^18.4.4",
-    "@litert/eslint-plugin-rules": "^0.1.6",
-    "@types/node": "^20.11.0",
-    "husky": "^8.0.3",
-    "typescript": "^5.3.3"
+    "@commitlint/cli": "^19.6.1",
+    "@commitlint/config-conventional": "^19.6.0",
+    "@litert/eslint-plugin-rules": "^0.2.5",
+    "@types/node": "^22.10.2",
+    "husky": "^9.1.7",
+    "typescript": "^5.7.2"
   },
   "engines": {
     "node": ">=18.0.0"
