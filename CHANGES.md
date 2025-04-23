@@ -1,5 +1,10 @@
 # Changes Logs
 
+## v2.1.0
+
+- feat(logger): added `Logger.clone` method.
+- feat(logger): added `Logger.setSubject` method.
+
 ## v2.0.0
 
 - build(project): refactor the project, simplified the API and usage.

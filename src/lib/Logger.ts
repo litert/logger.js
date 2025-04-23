@@ -117,7 +117,7 @@ export class Logger<TLog, TLv extends string> implements dL.IBaseLogger<TLog, TL
                 'traceDepth': Math.max(0, options.traceDepth ?? this._options[lv]?.traceDepth ?? 0),
                 'enabled': options.enabled ?? this._options[lv]?.enabled ?? true,
                 'driver': options.driver ?? this._options[lv].driver,
-                'formatter': options.formatter ?? this._options[lv].formatter
+                'formatter': options.formatter ?? this._options[lv].formatter,
             };
 
             this._updateMethod(lv);
@@ -129,6 +129,42 @@ export class Logger<TLog, TLv extends string> implements dL.IBaseLogger<TLog, TL
     public getLevel(level: TLv): dL.ILevelOptions<TLog, TLv> {
 
         return this._options[level];
+    }
+
+    public clone(): this {
+
+        const logger = new Logger<TLog, TLv>(
+            this.subject,
+            { ...this._options },
+            this.levels
+        );
+
+        for (const lv of this.levels) {
+
+            logger.setLevelOptions({
+                levels: lv,
+                ...this.getLevel(lv),
+            });
+        }
+
+        return logger as this;
+    }
+
+    public setSubject(subject: string): this {
+
+        if (this.subject === subject) {
+
+            return this;
+        }
+
+        Object.assign(this, { subject });
+
+        for (const lv of this.levels) {
+
+            this._updateMethod(lv);
+        }
+
+        return this;
     }
 
     protected _updateMethod(lv: string): void {

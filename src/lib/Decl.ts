@@ -134,6 +134,18 @@ export interface IBaseLogger<TLog, TLv extends string> {
      * @param level     The level name.
      */
     getLevel(level: TLv): ILevelOptions<TLog, TLv>;
+
+    /**
+     * Change the subject of current logger.
+     *
+     * @param subject The new subject of logger.
+     */
+    setSubject(subject: string): this;
+
+    /**
+     * Clone the current logger instance.
+     */
+    clone(): this;
 }
 
 /**

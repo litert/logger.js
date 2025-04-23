@@ -107,3 +107,27 @@ import LoggerFactory from '../lib';
 
     loggerB.warning('This is WARNING log. but will not be output.');
 })();
+
+(function testClone(): void {
+
+    console.log('------------------ Clone Method ------------------');
+
+    const loggerA = LoggerFactory.createLogger('A');
+
+    loggerA.setLevelOptions({ enabled: true });
+    loggerA.setLevelOptions({ enabled: false, levels: 'debug' });
+
+    loggerA.info('This is INFO log.');
+    loggerA.debug('This is DEBUG log but will not be output.');
+
+    const loggerB = loggerA.clone();
+
+    loggerB.setSubject('B');
+
+    loggerB.info('This is INFO log from B.');
+    loggerB.debug('This is DEBUG log from B but will not be output.');
+
+    loggerA.setLevelOptions({ enabled: true, levels: 'debug' });
+    loggerA.debug('This is DEBUG log from A and will be output.');
+    loggerB.debug('This is DEBUG log from B but will not be output.');
+})();
