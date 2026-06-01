@@ -29,6 +29,7 @@
     "strictNullChecks": true,
     "strictFunctionTypes": true,
     "lib": ["es2020"],
+    "types": ["node"],
     "newLine": "LF",
     "alwaysStrict": true,
     /* Strict Type-Checking Options */        
